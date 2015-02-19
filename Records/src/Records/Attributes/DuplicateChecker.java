@@ -40,7 +40,7 @@ public class DuplicateChecker {
 		if (!(!isDuplicate(Title, Artist))) {
 			valSet = null;
 		} else {
-			valSet = SongAttributes.parseXml(Artist, Title, false);
+			valSet = EchonestSongAttributes.parseXml(Artist, Title, false);
 		}
 		if (valSet != null) {
 			String newTitle = valSet.get(0);

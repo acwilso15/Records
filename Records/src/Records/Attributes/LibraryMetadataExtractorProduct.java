@@ -29,7 +29,7 @@ class LibraryMetadataExtractorProduct {
 			AbstractID3v2Tag ID3v2Tag = LibraryMetadataExtractor.setv2Tag(mp3);
 			String title = LibraryMetadataExtractor.getTitle(ID3v2Tag, null);
 			String artist = LibraryMetadataExtractor.getArtist(ID3v2Tag, null);
-			ArrayList<String> valSet = SongAttributes.parseXml(artist, title,
+			ArrayList<String> valSet = EchonestSongAttributes.parseXml(artist, title,
 					true);
 			String album = LibraryMetadataExtractor.getAlbum(ID3v2Tag, null,
 					valSet);
@@ -50,7 +50,7 @@ class LibraryMetadataExtractorProduct {
 			String title = LibraryMetadataExtractor.getTitle(null, tag)
 					.replaceAll(",", "");
 			String artist = LibraryMetadataExtractor.getArtist(null, tag);
-			ArrayList<String> valSet = SongAttributes.parseXml(artist, title,
+			ArrayList<String> valSet = EchonestSongAttributes.parseXml(artist, title,
 					false);
 			String album = LibraryMetadataExtractor.getAlbum(null, tag, valSet);
 			set.add(title + "_" + artist + "_" + album);

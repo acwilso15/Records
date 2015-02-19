@@ -18,11 +18,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * The Class SongAttributes.
+ * The Class EchonestSongAttributes.
  *
  * @author Alexander
  */
-class SongAttributes {
+class EchonestSongAttributes {
 
   /**
    * @param attributeToConvert
@@ -51,7 +51,7 @@ class SongAttributes {
    * @return the string
    */
   private static String convertNumberToKey() {
-    System.out.println("SongAttributes.convertNumberToKey()");
+    System.out.println("EchonestSongAttributes.convertNumberToKey()");
 
     String keys = "unknown";
     switch (key) {
@@ -101,7 +101,7 @@ class SongAttributes {
    * @return the array list
    */
   private static ArrayList<String> createValueSet() {
-    System.out.println("SongAttributes.createValueSet()");
+    System.out.println("EchonestSongAttributes.createValueSet()");
 
     ArrayList<String> valSet = new ArrayList<String>();
     boolean continuer;
@@ -139,10 +139,7 @@ class SongAttributes {
       String Acoustic = addZeros(Acousticness);
 
       valSet.add(titles);
-      // System.out.println("TITLE: " + titles);
       valSet.add(artists);
-      // System.out.println("ARTIST: " + artists);
-
       valSet.add(BPM);
       valSet.add(Key);
       valSet.add(Dance);
@@ -168,7 +165,7 @@ class SongAttributes {
    * @return the array list
    */
   static ArrayList<String> parseXml(String artist, String title, boolean bypassDuplicate) {
-    System.out.println("SongAttributes.parseXml(" + artist + ", " + title + ", " + bypassDuplicate
+    System.out.println("EchonestSongAttributes.parseXml(" + artist + ", " + title + ", " + bypassDuplicate
         + ")");
     byPass = bypassDuplicate;
     artists = artist.trim();
@@ -188,10 +185,6 @@ class SongAttributes {
 
     if (PreviewURL.equals("") || PurchaseLink.equals("") || albumTitles.equals("")
         || RssGenres.equals("")) {// ||
-      // titles.equals("")
-      // ||
-      // artists.equals(""))
-      // {
       ArrayList<String> beatportValSet = BeatportInfoRetriever.getInfo(title, artist);
       if (PurchaseLink.equals("")) {
         PurchaseLink = beatportValSet.get(1).toString();
@@ -202,12 +195,6 @@ class SongAttributes {
       if (RssGenres.equals("")) {
         RssGenres = beatportValSet.get(3).toString();
       }
-      // if (titles.equals("")) {
-      // titles = beatportValSet.get(4).toString();
-      // }
-      // if (artists.equals("")) {
-      // artists = beatportValSet.get(5).toString();
-      // }
       beatBPM = beatportValSet.get(4).toString();
       beatKey = beatportValSet.get(5).toString();
 
@@ -232,26 +219,7 @@ class SongAttributes {
     JSONObject sumObject = null;
 
     try {
-      titleLine = titleLine.replaceAll("&", "");
-      // String value = "";
-      // int count = 0;
-      String site = "http://developer.echonest.com/api/v4/song/search?api_key=LXSEHQYDQJBY8GYMO&format=json&artist="
-          + artistLine.replaceAll(" ", "%20")
-          + "&title="
-          + titleLine.replaceAll(" ", "%20")
-          + "&results=1&bucket=audio_summary&bucket=song_type&bucket=song_hotttnesss&bucket=song_discovery";
-      URL url = null;
-      InputStream connection = null;
-      try {
-        url = new URL(site);
-        System.out.println(url);
-        // connection = url.openStream();
-
-      } catch (MalformedURLException ex) {
-        Logger.getLogger(SongAttributes.class.getName()).log(Level.SEVERE, null, ex);
-      }
-
-      InputStream is = url.openStream();
+      InputStream is = getEchonestInputStream(artistLine, titleLine);
       String Path = "";
       try {
         trackTime();
@@ -260,12 +228,9 @@ class SongAttributes {
         while ((line = br.readLine()) != null) {
           Path = Path + line;
         }
-        // System.out.println(Path);
       } catch (IOException ex) {
-        Logger.getLogger(SongAttributes.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(EchonestSongAttributes.class.getName()).log(Level.SEVERE, null, ex);
       }
-
-      // print result
 
       trackTime();
 
@@ -335,6 +300,31 @@ class SongAttributes {
   }
 
   /**
+   * @param artistLine
+   * @param titleLine
+   * @return
+   * @throws IOException
+   */
+  private static InputStream getEchonestInputStream(String artistLine, String titleLine)
+      throws IOException {
+    String site = "http://developer.echonest.com/api/v4/song/search?api_key=LXSEHQYDQJBY8GYMO&format=json&artist="
+        + artistLine.replaceAll(" ", "%20")
+        + "&title="
+        + titleLine.replaceAll(" ", "%20").replaceAll("&", "")
+        + "&results=1&bucket=audio_summary&bucket=song_type&bucket=song_hotttnesss&bucket=song_discovery";
+    URL url = null;
+    try {
+      url = new URL(site);
+      System.out.println(url);
+    } catch (MalformedURLException ex) {
+      Logger.getLogger(EchonestSongAttributes.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    InputStream is = url.openStream();
+    return is;
+  }
+
+  /**
    * Strip perenthesis.
    *
    * @param titleLine
@@ -342,7 +332,7 @@ class SongAttributes {
    * @return the string
    */
   private static String stripPerenthesis(String titleLine) {
-    System.out.println("SongAttributes.stripPerenthesis(" + titleLine + ")");
+    System.out.println("EchonestSongAttributes.stripPerenthesis(" + titleLine + ")");
 
     String newTitle = titleLine;
     if (!(titleLine.contains("remix[)]") || titleLine.contains("Remix[)]")
@@ -373,7 +363,7 @@ class SongAttributes {
         System.out.println("Waiting for the next available connection...");
         TimeUnit.SECONDS.sleep(60 - timeInSeconds);
       } catch (InterruptedException ex) {
-        Logger.getLogger(SongAttributes.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(EchonestSongAttributes.class.getName()).log(Level.SEVERE, null, ex);
       }
       limitUsed = 1;
       startTime = System.currentTimeMillis() / 1000;

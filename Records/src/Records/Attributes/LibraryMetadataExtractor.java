@@ -89,10 +89,10 @@ public class LibraryMetadataExtractor {
 		System.out.println("LibraryMetadataExtractor.getBPM()");
 		String BPM;
 		if (tag == null) {
-			BPM = SongAttributes.addZeros(v2tag
+			BPM = EchonestSongAttributes.addZeros(v2tag
 					.getFirst(ID3v24Frames.FRAME_ID_BPM));
 		} else {
-			BPM = SongAttributes.addZeros(tag.getFirst(FieldKey.BPM));
+			BPM = EchonestSongAttributes.addZeros(tag.getFirst(FieldKey.BPM));
 		}
 		if (BPM.equals("")) {
 			BPM = AttributeCleaner.clean(valSet.get(2));
