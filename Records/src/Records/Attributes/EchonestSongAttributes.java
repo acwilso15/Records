@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -115,7 +114,7 @@ class EchonestSongAttributes {
       valSet = null;
     } else {
       try {
-        retrieveInfo(artists, titles);
+        parseJSON(artists, titles);
       } catch (Exception e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -134,9 +133,9 @@ class EchonestSongAttributes {
       } else if (beatKey != null) {
         Key = beatKey;
       }
-      String Dance = addZeros(Danceability);
-      String EnergyAmount = addZeros(Energy);
-      String Acoustic = addZeros(Acousticness);
+      String Dance = addZeros(danceability);
+      String EnergyAmount = addZeros(energy);
+      String Acoustic = addZeros(acousticness);
 
       valSet.add(titles);
       valSet.add(artists);
@@ -154,54 +153,37 @@ class EchonestSongAttributes {
   }
 
   /**
-   * Parses the xml.
-   *
-   * @param artist
-   *          the artist
-   * @param title
-   *          the title
-   * @param bypassDuplicate
-   *          the bypass duplicate
-   * @return the array list
+   * @param artistLine
+   * @param titleLine
+   * @return
+   * @throws IOException
    */
-  static ArrayList<String> parseXml(String artist, String title, boolean bypassDuplicate) {
-    System.out.println("EchonestSongAttributes.parseXml(" + artist + ", " + title + ", " + bypassDuplicate
-        + ")");
-    byPass = bypassDuplicate;
-    artists = artist.trim();
-    if (!(title.contains("(") || title.contains(")"))) {
-      titles = title;
-    } else {
-      titles = stripPerenthesis(title);
+  private static InputStream getEchonestInputStream(String artistLine, String titleLine)throws IOException {
+    String site = "http://developer.echonest.com/api/v4/song/search?api_key=LXSEHQYDQJBY8GYMO&format=json&artist="
+        + artistLine.replaceAll(" ", "%20")
+        + "&title="
+        + titleLine.replaceAll(" ", "%20").replaceAll("&", "")
+        + "&results=1&bucket=audio_summary&bucket=song_type&bucket=song_hotttnesss&bucket=song_discovery";
+    URL url = null;
+    url = new URL(site);
+    System.out.println(url);
+    InputStream is = url.openStream();
+    trackTime();
+    return is;
+  }
+
+  /**
+   * @param sumObject
+   */
+  private static String getJsonStringObject(JSONObject sumObject, String lookupName) {
+    String attribute;
+    try {
+      attribute = sumObject.optString(lookupName);
+    } catch (Exception ex) {
+      attribute = "";
+      Logger.getLogger(ItunesInfoRetriever.class.getName()).log(Level.SEVERE, null, ex);
     }
-
-    ArrayList<String> ItunesValSet = ItunesInfoRetriever.getInfo(titles, artists);
-    PreviewURL = ItunesValSet.get(0).toString();
-    PurchaseLink = ItunesValSet.get(1).toString();
-    albumTitles = ItunesValSet.get(2).toString().replaceAll("'", "");
-    RssGenres = ItunesValSet.get(3).toString();
-    titles = ItunesValSet.get(4).toString().replaceAll("'", "");
-    artists = ItunesValSet.get(5).toString().replaceAll("'", "");
-
-    if (PreviewURL.equals("") || PurchaseLink.equals("") || albumTitles.equals("")
-        || RssGenres.equals("")) {// ||
-      ArrayList<String> beatportValSet = BeatportInfoRetriever.getInfo(title, artist);
-      if (PurchaseLink.equals("")) {
-        PurchaseLink = beatportValSet.get(1).toString();
-      }
-      if (albumTitles.equals("")) {
-        albumTitles = beatportValSet.get(2).toString();
-      }
-      if (RssGenres.equals("")) {
-        RssGenres = beatportValSet.get(3).toString();
-      }
-      beatBPM = beatportValSet.get(4).toString();
-      beatKey = beatportValSet.get(5).toString();
-
-    }
-    ArrayList<String> valSet = createValueSet();
-    // valSet.add(Path);
-    return valSet;
+    return attribute;
   }
 
   /**
@@ -214,15 +196,14 @@ class EchonestSongAttributes {
    * @throws Exception
    *           the exception
    */
-  private static void retrieveInfo(String artistLine, String titleLine) throws Exception {
-    System.out.println("getSongAttributes.parseXml(" + artistLine + ", " + titleLine + ")");
+  private static void parseJSON(String artistLine, String titleLine) throws Exception {
+    System.out.println("EchonestSongAttributes.retrieveInfo(" + artistLine + ", " + titleLine + ")");
     JSONObject sumObject = null;
 
     try {
       InputStream is = getEchonestInputStream(artistLine, titleLine);
       String Path = "";
       try {
-        trackTime();
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         String line = "";
         while ((line = br.readLine()) != null) {
@@ -242,48 +223,21 @@ class EchonestSongAttributes {
       objectInArray = songArray.getJSONObject(0);
       sumObject = objectInArray.getJSONObject("audio_summary");
 
-      try {
-        bpms = sumObject.optString("tempo");
-      } catch (Exception ex) {
-        bpms = "";
-        Logger.getLogger(ItunesInfoRetriever.class.getName()).log(Level.SEVERE, null, ex);
-      }
+      bpms = getJsonStringObject(sumObject, "tempo");
+      key = getJsonStringObject(sumObject, "key");
+      danceability = getJsonStringObject(sumObject, "danceability");
+      energy = ""
+          + ((Double.parseDouble(getJsonStringObject(sumObject, "energy")) + (Double
+              .parseDouble(getJsonStringObject(sumObject, "valence")))) / 2);
+      acousticness = getJsonStringObject(sumObject, "acousticness");
 
-      try {
-        key = sumObject.optString("key");
-      } catch (Exception ex) {
-        key = "";
-        Logger.getLogger(ItunesInfoRetriever.class.getName()).log(Level.SEVERE, null, ex);
-      }
-
-      try {
-        Danceability = sumObject.optString("danceability");
-      } catch (Exception ex) {
-        Danceability = "";
-        Logger.getLogger(ItunesInfoRetriever.class.getName()).log(Level.SEVERE, null, ex);
-      }
-
-      try {
-        Energy = ""
-            + ((Double.parseDouble(sumObject.optString("energy")) + Double.parseDouble(sumObject
-                .optString("valence"))) / 2);
-      } catch (Exception ex) {
-        Energy = "";
-        Logger.getLogger(ItunesInfoRetriever.class.getName()).log(Level.SEVERE, null, ex);
-      }
-      try {
-        Acousticness = sumObject.optString("acousticness");
-      } catch (Exception ex) {
-        Acousticness = "";
-        Logger.getLogger(ItunesInfoRetriever.class.getName()).log(Level.SEVERE, null, ex);
-      }
     } catch (JSONException ex) {
       if (!(!resetNoNum)) {
         bpms = "";
         key = "";
-        Danceability = "";
-        Energy = "";
-        Acousticness = "";
+        danceability = "";
+        energy = "";
+        acousticness = "";
       } else {
         System.out.println("No numbers...Resetting...");
         String resetTitle = titleLine.replaceAll("[0-9]", "").replace("/", "-");
@@ -294,34 +248,59 @@ class EchonestSongAttributes {
           sub = m.group(1);
         }
         resetTitle = titleLine.replace(sub, "");
-        retrieveInfo(AttributeCleaner.cleanAttribute("Title", resetTitle), artistLine);
+        parseJSON(AttributeCleaner.cleanAttribute("Title", resetTitle), artistLine);
       }
     }
   }
 
   /**
-   * @param artistLine
-   * @param titleLine
-   * @return
-   * @throws IOException
+   * Parses the xml.
+   *
+   * @param artist
+   *          the artist
+   * @param title
+   *          the title
+   * @param bypassDuplicate
+   *          the bypass duplicate
+   * @return the array list
    */
-  private static InputStream getEchonestInputStream(String artistLine, String titleLine)
-      throws IOException {
-    String site = "http://developer.echonest.com/api/v4/song/search?api_key=LXSEHQYDQJBY8GYMO&format=json&artist="
-        + artistLine.replaceAll(" ", "%20")
-        + "&title="
-        + titleLine.replaceAll(" ", "%20").replaceAll("&", "")
-        + "&results=1&bucket=audio_summary&bucket=song_type&bucket=song_hotttnesss&bucket=song_discovery";
-    URL url = null;
-    try {
-      url = new URL(site);
-      System.out.println(url);
-    } catch (MalformedURLException ex) {
-      Logger.getLogger(EchonestSongAttributes.class.getName()).log(Level.SEVERE, null, ex);
+  static ArrayList<String> retrieveEchoInfo(String artist, String title, boolean bypassDuplicate) {
+    System.out.println("EchonestSongAttributes.parseXml(" + artist + ", " + title + ", "
+        + bypassDuplicate + ")");
+    byPass = bypassDuplicate;
+    artists = artist.trim();
+    if (!(title.contains("(") || title.contains(")"))) {
+      titles = title;
+    } else {
+      titles = stripPerenthesis(title);
     }
 
-    InputStream is = url.openStream();
-    return is;
+    ArrayList<String> ItunesValSet = ItunesInfoRetriever.getInfo(titles, artists);
+    PreviewURL = ItunesValSet.get(0).toString();
+    PurchaseLink = ItunesValSet.get(1).toString();
+    albumTitles = ItunesValSet.get(2).toString().replaceAll("'", "");
+    RssGenres = ItunesValSet.get(3).toString();
+    titles = ItunesValSet.get(4).toString().replaceAll("'", "");
+    artists = ItunesValSet.get(5).toString().replaceAll("'", "");
+
+    if (PreviewURL.equals("") || PurchaseLink.equals("") || albumTitles.equals("")
+        || RssGenres.equals("")) {
+      ArrayList<String> beatportValSet = BeatportInfoRetriever.getInfo(title, artist);
+      if (PurchaseLink.equals("")) {
+        PurchaseLink = beatportValSet.get(1).toString();
+      }
+      if (albumTitles.equals("")) {
+        albumTitles = beatportValSet.get(2).toString();
+      }
+      if (RssGenres.equals("")) {
+        RssGenres = beatportValSet.get(3).toString();
+      }
+      beatBPM = beatportValSet.get(4).toString();
+      beatKey = beatportValSet.get(5).toString();
+    }
+    ArrayList<String> valSet = createValueSet();
+    // valSet.add(Path);
+    return valSet;
   }
 
   /**
@@ -346,7 +325,7 @@ class EchonestSongAttributes {
    * Track time.
    */
   private static void trackTime() {
-    System.out.println("getSongAttributes.timeTrack()");
+    System.out.println("EchonestSongAttributes.timeTrack()");
     if (limitUsed == 0) {
       startTime = System.currentTimeMillis() / 1000;
       System.out.println("Setting startTime = " + startTime);
@@ -376,7 +355,7 @@ class EchonestSongAttributes {
   }
 
   /** The beat key. */
-  private static String key, artists, titles, bpms, Danceability, Energy, Acousticness,
+  private static String key, artists, titles, bpms, danceability, energy, acousticness,
       albumTitles, RssGenres, PreviewURL, PurchaseLink, beatBPM, beatKey;
 
   /** The by pass. */
