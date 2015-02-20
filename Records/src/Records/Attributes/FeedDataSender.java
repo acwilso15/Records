@@ -103,16 +103,16 @@ public class FeedDataSender extends Thread {
 	@Override
 	public void run() {
 		System.out.println("FeedDataSender.startExtraction()");
-
-		for (FeedDataPaths key : keys) {
-			saveData.readFeeds(key);
-		}
-		int feedDataSize = saveData.getFeedData().size();
-		ArrayList<FeedDataStore> feedData = saveData.getFeedData();
-		for (int y = 0; y < feedDataSize; y++) {
-			feedData.get(y).insertFeedData();
+		saveData();
+		for (int y = 0; y < saveData.getFeedData().size(); y++) {
+		  saveData.getFeedData().get(y).insertFeedData();
 		}
 		System.out.println("RSS Import Complete!");
-		// RecordsMain.getUI.setVisible(true);
 	}
+
+  private void saveData() {
+    for (FeedDataPaths key : keys) {
+      saveData.readFeeds(key);
+    }
+  }
 }

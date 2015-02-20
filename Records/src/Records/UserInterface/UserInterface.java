@@ -278,6 +278,22 @@ public class UserInterface extends JFrame {
   }
 
   /**
+   * @param song
+   * @param artist
+   * @param Loc
+   * @return
+   */
+  private ResultSet getPlayerSongPathway(String song, String artist, String Loc) {
+    ResultSet result;
+    if ("Directory".equals(Loc)) {
+      result = RecordsMain.dba.getLibFilePathway(song, artist);
+    } else {
+      result = RecordsMain.dba.getFilePathway(song, artist);
+    }
+    return result;
+  }
+
+  /**
    * Gets the user library.
    *
    * @return the user library
@@ -538,103 +554,7 @@ public class UserInterface extends JFrame {
     PlayButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        String song = titleTextField.getText();
-        String artist = artistTextField.getText();
-        String Loc = locationTextField.getText();
-        // System.out.println(song);
-        // System.out.println(artist);
-        // System.out.println(Loc);
-
-        ResultSet result;
-        if (!(PlayerUserInterface.getmusicPlayer() != null)) {
-          if ("Directory".equals(Loc)) {
-            try {
-              result = RecordsMain.dba.getLibFilePathway(song, artist);
-              if (result.next()) {
-                PlayerUserInterface.PlayButton(
-                    result.getString("FilePathway").replaceAll("~", "'"), Loc, song);
-
-              }
-            } catch (SQLException ex) {
-              Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
-            }
-          } else {
-            try {
-              result = RecordsMain.dba.getFilePathway(song, artist);
-              if (result.next()) {
-                PlayerUserInterface.PlayButton(
-                    result.getString("FilePathway").replaceAll("~", "'"), Loc, song);
-
-              }
-            } catch (SQLException ex) {
-              Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
-            }
-          }
-          beginMarquee(song + " - " + artist);
-        } else {
-          // System.out.println("not Null!");
-          if (null != PlayerUserInterface.getStatus()) {
-            switch (PlayerUserInterface.getStatus()) {
-            case "PLAYING":
-              PlayerUserInterface.StopButton();
-              if ("Directory".equals(Loc)) {
-                try {
-                  result = RecordsMain.dba.getLibFilePathway(song, artist);
-                  if (result.next()) {
-                    PlayerUserInterface.PlayButton(
-                        result.getString("FilePathway").replaceAll("~", "'"), Loc, song);
-
-                  }
-                } catch (SQLException ex) {
-                  Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-              } else {
-                try {
-                  result = RecordsMain.dba.getFilePathway(song, artist);
-                  if (result.next()) {
-                    PlayerUserInterface.PlayButton(
-                        result.getString("FilePathway").replaceAll("~", "'"), Loc, song);
-
-                  }
-                } catch (SQLException ex) {
-                  Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-              }
-              beginMarquee(song + " - " + artist);
-              break;
-            case "PAUSED":
-              PlayerUserInterface.ResumeButton();
-              // PlayTitleField.setText(song + " - " + artist);
-              break;
-            case "STOPPED":
-              if ("Directory".equals(Loc)) {
-                try {
-                  result = RecordsMain.dba.getLibFilePathway(song, artist);
-                  if (result.next()) {
-                    PlayerUserInterface.PlayButton(
-                        result.getString("FilePathway").replaceAll("~", "'"), Loc, song);
-
-                  }
-                } catch (SQLException ex) {
-                  Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-              } else {
-                try {
-                  result = RecordsMain.dba.getFilePathway(song, artist);
-                  if (result.next()) {
-                    PlayerUserInterface.PlayButton(
-                        result.getString("FilePathway").replaceAll("~", "'"), Loc, song);
-
-                  }
-                } catch (SQLException ex) {
-                  Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-              }
-              beginMarquee(song + " - " + artist);
-              break;
-            }
-          }
-        }
+        playReaction();
       }
     });
     PlayButton.setBounds(1225, 57, 24, 24);
@@ -683,58 +603,9 @@ public class UserInterface extends JFrame {
     SelectAllCheckBox.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent evt) {
-        if (!(SelectAllCheckBox.isSelected())) {
-          BillboardCheckbox.doClick();
-          BillboardEDMCheckbox.doClick();
-          BillboardCountryCheckbox.doClick();
-          BillboardRnBCheckbox.doClick();
-          HypeCheckbox.doClick();
-          ItunesCheckbox.doClick();
-          ItunesCountryCheckbox.doClick();
-          ItunesRnBCheckbox.doClick();
-          ItunesEDMCheckbox.doClick();
-          UKCheckbox.doClick();
-          ShazamCheckbox.doClick();
-          BeatportCheckbox.doClick();
-        } else {
-          if (!BillboardCheckbox.isSelected()) {
-            BillboardCheckbox.doClick();
-          }
-          if (!BillboardEDMCheckbox.isSelected()) {
-            BillboardEDMCheckbox.doClick();
-          }
-          if (!BillboardCountryCheckbox.isSelected()) {
-            BillboardCountryCheckbox.doClick();
-          }
-          if (!BillboardRnBCheckbox.isSelected()) {
-            BillboardRnBCheckbox.doClick();
-          }
-          if (!HypeCheckbox.isSelected()) {
-            HypeCheckbox.doClick();
-          }
-          if (!ItunesCheckbox.isSelected()) {
-            ItunesCheckbox.doClick();
-          }
-          if (!ShazamCheckbox.isSelected()) {
-            ShazamCheckbox.doClick();
-          }
-          if (!ItunesCountryCheckbox.isSelected()) {
-            ItunesCountryCheckbox.doClick();
-          }
-          if (!ItunesRnBCheckbox.isSelected()) {
-            ItunesRnBCheckbox.doClick();
-          }
-          if (!ItunesEDMCheckbox.isSelected()) {
-            ItunesEDMCheckbox.doClick();
-          }
-          if (!UKCheckbox.isSelected()) {
-            UKCheckbox.doClick();
-          }
-          if (!BeatportCheckbox.isSelected()) {
-            BeatportCheckbox.doClick();
-          }
-        }
+        selectCheckboxAllClickReaction();
       }
+
     });
     SelectAllCheckBox.setBounds(1230, 125, 75, 23);
     contentPane.add(SelectAllCheckBox);
@@ -992,7 +863,7 @@ public class UserInterface extends JFrame {
             ResultSet result;
             if ("Directory".equals(location)) {
               result = RecordsMain.dba.getLibFilePathway(song, artist);
-                setCurrentPath(result);
+              setCurrentPath(result);
             } else {
               result = RecordsMain.dba.getFilePathway(song, artist);
               if (result.next()) {
@@ -1044,9 +915,7 @@ public class UserInterface extends JFrame {
         }
       }
     });
-    
-  
-    
+
     songPrefTable.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent evt) {
@@ -1268,7 +1137,6 @@ public class UserInterface extends JFrame {
         locationTextField.setText(location);
         startAlbumCoverReplacer(location, image);
 
-
         if (evt.getClickCount() == 2) {
           ResultSet result;
           try {
@@ -1461,6 +1329,44 @@ public class UserInterface extends JFrame {
     contentPane.add(btnFeedback);
   }
 
+  public void playReaction() {
+    String song = titleTextField.getText();
+    String artist = artistTextField.getText();
+    String location = locationTextField.getText();
+
+    ResultSet result;
+    if (PlayerUserInterface.getmusicPlayer() == null) {
+      try {
+        startMediaPlayer(song, location, artist);
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    } else {
+      if (PlayerUserInterface.getStatus() != null) {
+        switch (PlayerUserInterface.getStatus()) {
+        case "PLAYING":
+          PlayerUserInterface.StopButton();
+          try {
+            startMediaPlayer(song, location, artist);
+          } catch (SQLException e) {
+            e.printStackTrace();
+          }
+          break;
+        case "PAUSED":
+          PlayerUserInterface.ResumeButton();
+          break;
+        case "STOPPED":
+          try {
+            startMediaPlayer(song, location, artist);
+          } catch (SQLException e) {
+            e.printStackTrace();
+          }
+          break;
+        }
+      }
+    }
+  }
+
   /**
    * Sets the user library.
    *
@@ -1651,6 +1557,7 @@ public class UserInterface extends JFrame {
       }
     });
   }
+
   /**
    * @param location
    * @param image
@@ -1663,6 +1570,78 @@ public class UserInterface extends JFrame {
       Switch.close();
       Switch = new AlbumCoverReplacer(location, image);
       Switch.start();
+    }
+  }
+
+  /**
+   * @param song
+   * @param Loc
+   * @param result
+   * @throws SQLException
+   */
+  private void startMediaPlayer(String song, String location, String artist) throws SQLException {
+    ResultSet result = getPlayerSongPathway(song, artist, location);
+    if (result.next()) {
+      PlayerUserInterface.PlayButton(result.getString("FilePathway").replaceAll("~", "'"),
+          location, song);
+    }
+    beginMarquee(song + " - " + artist);
+  }
+
+  /**
+   * 
+   */
+  public void selectCheckboxAllClickReaction() {
+    if (!(SelectAllCheckBox.isSelected())) {
+      BillboardCheckbox.doClick();
+      BillboardEDMCheckbox.doClick();
+      BillboardCountryCheckbox.doClick();
+      BillboardRnBCheckbox.doClick();
+      HypeCheckbox.doClick();
+      ItunesCheckbox.doClick();
+      ItunesCountryCheckbox.doClick();
+      ItunesRnBCheckbox.doClick();
+      ItunesEDMCheckbox.doClick();
+      UKCheckbox.doClick();
+      ShazamCheckbox.doClick();
+      BeatportCheckbox.doClick();
+    } else {
+      if (!BillboardCheckbox.isSelected()) {
+        BillboardCheckbox.doClick();
+      }
+      if (!BillboardEDMCheckbox.isSelected()) {
+        BillboardEDMCheckbox.doClick();
+      }
+      if (!BillboardCountryCheckbox.isSelected()) {
+        BillboardCountryCheckbox.doClick();
+      }
+      if (!BillboardRnBCheckbox.isSelected()) {
+        BillboardRnBCheckbox.doClick();
+      }
+      if (!HypeCheckbox.isSelected()) {
+        HypeCheckbox.doClick();
+      }
+      if (!ItunesCheckbox.isSelected()) {
+        ItunesCheckbox.doClick();
+      }
+      if (!ShazamCheckbox.isSelected()) {
+        ShazamCheckbox.doClick();
+      }
+      if (!ItunesCountryCheckbox.isSelected()) {
+        ItunesCountryCheckbox.doClick();
+      }
+      if (!ItunesRnBCheckbox.isSelected()) {
+        ItunesRnBCheckbox.doClick();
+      }
+      if (!ItunesEDMCheckbox.isSelected()) {
+        ItunesEDMCheckbox.doClick();
+      }
+      if (!UKCheckbox.isSelected()) {
+        UKCheckbox.doClick();
+      }
+      if (!BeatportCheckbox.isSelected()) {
+        BeatportCheckbox.doClick();
+      }
     }
   }
 }

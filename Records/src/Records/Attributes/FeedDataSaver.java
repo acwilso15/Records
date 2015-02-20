@@ -21,6 +21,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import Records.Database.DatabaseSetup;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class FeedDataSaver.
@@ -103,22 +105,24 @@ public class FeedDataSaver {
 	 * @return the x path expression
 	 * @throws XPathExpressionException the x path expression exception
 	 */
-	private XPathExpression evaluateXpath(String xpathTitle,
-			String xpathArtist, int x)
-			throws javax.xml.xpath.XPathExpressionException {
-		String path;
-		if (x == 0) {
-			path = xpathTitle;
-		} else {
-			path = xpathArtist;
-		}
-		XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
-		XPath xPathEvaluator;
-		xPathEvaluator = XPATH_FACTORY.newXPath();
-		XPathExpression nameExpr;
-		nameExpr = xPathEvaluator.compile(path);
+	private XPathExpression evaluateXpath(String xpathTitle, String xpathArtist, int x) 
+	    throws javax.xml.xpath.XPathExpressionException {
+		String path = checkPath(xpathTitle, xpathArtist, x);
+    XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
+		XPath xPathEvaluator = XPATH_FACTORY.newXPath();
+		XPathExpression nameExpr = xPathEvaluator.compile(path);
 		return nameExpr;
 	}
+
+  private String checkPath(String xpathTitle, String xpathArtist, int x) {
+    String path;
+    if (x == 0) {
+      path = xpathTitle;
+    } else {
+      path = xpathArtist;
+    }
+    return path;
+  }
 
 	/**
 	 * Gets the feed data.
@@ -162,21 +166,25 @@ public class FeedDataSaver {
 			XPathExpressionException {
 		NodeList trackNameNodes;
 		XPathExpression nameExpr = evaluateXpath(xpathTitle, xpathArtist, x);
-		URL url = new URL(UrlPath);
-		DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory
-				.newInstance();
-		URLConnection connection = url.openConnection();
-		DocumentBuilder db = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
-		Document document = null;
-		try {
-			document = db.parse(connection.getInputStream());
-		} catch (java.net.SocketException ex) {
-			readFeeds(key);
-		}
-		trackNameNodes = (NodeList) nameExpr.evaluate(document,
-				XPathConstants.NODESET);
+		Document document = generateDocument(UrlPath, key);
+    trackNameNodes = (NodeList) nameExpr.evaluate(document, XPathConstants.NODESET);
 		return trackNameNodes;
 	}
+
+  private Document generateDocument(String UrlPath, FeedDataPaths key) throws java.io.IOException,
+      javax.xml.parsers.ParserConfigurationException, org.xml.sax.SAXException {
+    URL url = new URL(UrlPath);
+    DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+    URLConnection connection = url.openConnection();
+    DocumentBuilder db = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
+    Document document = null;
+    try {
+      document = db.parse(connection.getInputStream());
+    } catch (java.net.SocketException ex) {
+      readFeeds(key);
+    }
+    return document;
+  }
 
 	/**
 	 * Read feeds.
@@ -283,10 +291,12 @@ public class FeedDataSaver {
 			count++;
 		}
 		setRssSongCounter(getRssSongCounter() + 1);
+		System.out.println("-------------"+getRssSongCounter()+"/"+DatabaseSetup.splash.preRssExtractCount+"--------------------");
+		
 		if (RssTitle != null && musicians != null) {
-			valSet = DuplicateChecker.getValues(RssTitle.replaceAll("/", "-"),
-					musicians);
-			if (!(valSet != null)) {
+		  boolean byPassDuplicate = false;		  
+			valSet = DuplicateChecker.getValues(RssTitle.replaceAll("/", "-"), musicians, byPassDuplicate);
+			if (valSet == null) {
 				String previousLocation;
 				int feedDataSize = getFeedData().size();
 				ArrayList<FeedDataStore> feedDataSet = getFeedData();

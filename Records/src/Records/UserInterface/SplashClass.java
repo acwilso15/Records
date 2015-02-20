@@ -43,7 +43,7 @@ public class SplashClass extends Thread {
 	private int load;
 
 	/** The pre rss extract count. */
-	private int preRssExtractCount;
+public int preRssExtractCount;
 
 	/**
 	 * Instantiates a new splash class.

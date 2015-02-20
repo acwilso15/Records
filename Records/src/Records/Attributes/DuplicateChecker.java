@@ -15,75 +15,77 @@ import java.util.HashMap;
  */
 public class DuplicateChecker {
 
-	/**
-	 * Gets the hm.
-	 *
-	 * @return the hm
-	 */
-	public static HashMap getHm() {
-		return hm;
-	}
+  /**
+   * Gets the hm.
+   *
+   * @return the hm
+   */
+  public static HashMap getHm() {
+    return hm;
+  }
 
-	/**
-	 * Gets the values.
-	 *
-	 * @param Title
-	 *            the title
-	 * @param Artist
-	 *            the artist
-	 * @return the values
-	 */
-	public static ArrayList<String> getValues(String Title, String Artist) {
-		System.out.println("DuplicateEntry.getValues(" + Title + ", " + Artist
-				+ ")");
+  /**
+   * Gets the values.
+   *
+   * @param Title
+   *          the title
+   * @param Artist
+   *          the artist
+   * @return the values
+   */
+  public static ArrayList<String> getValues(String Title, String Artist, boolean byPassDuplicate) {
+    System.out.println("DuplicateEntry.getValues(" + Title + ", " + Artist + ", " + byPassDuplicate + ")");
+    if (isDuplicate(Title, Artist, byPassDuplicate)) {
+      valSet = null;
+    } else {
+      valSet = EchonestSongAttributes.retrieveEchoInfo(Artist, Title, byPassDuplicate);
+    }
+    if (valSet != null) {
+      String newTitle = valSet.get(0);
+      String newArtist = valSet.get(1);
+      getHm().put(newTitle + "," + newArtist, valSet);
+    }
+    return valSet;
+  }
 
-		if (!(!isDuplicate(Title, Artist))) {
-			valSet = null;
-		} else {
-			valSet = EchonestSongAttributes.retrieveEchoInfo(Artist, Title, false);
-		}
-		if (valSet != null) {
-			String newTitle = valSet.get(0);
-			String newArtist = valSet.get(1);
-			getHm().put(newTitle + "," + newArtist, valSet);
-		}
-		return valSet;
-	}
+  /**
+   * Checks if is duplicate.
+   *
+   * @param Title
+   *          the title
+   * @param Artist
+   *          the artist
+   * @return true, if is duplicate
+   */
+  public static boolean isDuplicate(String Title, String Artist, boolean byPass) {
+    System.out.println("DuplicateEntry.isDuplicate(" + Title + ", " + Artist + ")");
+    if (byPass == false) {
+      if (getHm().containsKey(Title + "," + Artist)) {
+        System.out.println("----Duplicate found----");
+        return true;
+      } else {
+        System.out.println("----New Entry----");
+        return false;
+      }
+    } else {
+      System.out.println("----ByPassed----");
+      return false;
+    }
+  }
 
-	/**
-	 * Checks if is duplicate.
-	 *
-	 * @param Title
-	 *            the title
-	 * @param Artist
-	 *            the artist
-	 * @return true, if is duplicate
-	 */
-	public static boolean isDuplicate(String Title, String Artist) {
-		System.out.println("DuplicateEntry.isDuplicate(" + Title + ", "
-				+ Artist + ")");
-		if (getHm().containsKey(Title + "," + Artist)) {
-			System.out.println("----Duplicate found----");
-			return true;
-		} else {
-			System.out.println("----New Entry----");
-			return false;
-		}
-	}
+  /**
+   * Sets the hm.
+   *
+   * @param aHm
+   *          the hm to set
+   */
+  public static void setHm(HashMap aHm) {
+    hm = aHm;
+  }
 
-	/**
-	 * Sets the hm.
-	 *
-	 * @param aHm
-	 *            the hm to set
-	 */
-	public static void setHm(HashMap aHm) {
-		hm = aHm;
-	}
+  /** The hm. */
+  private static HashMap hm;
 
-	/** The hm. */
-	private static HashMap hm;
-
-	/** The val set. */
-	private static ArrayList<String> valSet;
+  /** The val set. */
+  private static ArrayList<String> valSet;
 }

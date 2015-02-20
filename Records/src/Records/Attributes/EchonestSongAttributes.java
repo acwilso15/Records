@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -103,20 +104,12 @@ class EchonestSongAttributes {
     System.out.println("EchonestSongAttributes.createValueSet()");
 
     ArrayList<String> valSet = new ArrayList<String>();
-    boolean continuer;
-    if (byPass) {
-      continuer = false;
-    } else {
-      continuer = DuplicateChecker.isDuplicate(titles, artists);
-    }
-
-    if (!(!continuer)) {
+    if (DuplicateChecker.isDuplicate(titles, artists, byPass)) {
       valSet = null;
     } else {
       try {
         parseJSON(artists, titles);
       } catch (Exception e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
 
@@ -158,18 +151,23 @@ class EchonestSongAttributes {
    * @return
    * @throws IOException
    */
-  private static InputStream getEchonestInputStream(String artistLine, String titleLine)throws IOException {
+  private static InputStream getEchonestInputStream(String artistLine, String titleLine)
+      throws IOException {
+    URL url = getEchonestUrl(artistLine, titleLine);
+    System.out.println(url);
+    InputStream is = url.openStream();
+    trackTime();
+    return is;
+  }
+
+  private static URL getEchonestUrl(String artistLine, String titleLine)
+      throws MalformedURLException {
     String site = "http://developer.echonest.com/api/v4/song/search?api_key=LXSEHQYDQJBY8GYMO&format=json&artist="
         + artistLine.replaceAll(" ", "%20")
         + "&title="
         + titleLine.replaceAll(" ", "%20").replaceAll("&", "")
         + "&results=1&bucket=audio_summary&bucket=song_type&bucket=song_hotttnesss&bucket=song_discovery";
-    URL url = null;
-    url = new URL(site);
-    System.out.println(url);
-    InputStream is = url.openStream();
-    trackTime();
-    return is;
+    return new URL(site);
   }
 
   /**
@@ -196,33 +194,18 @@ class EchonestSongAttributes {
    * @throws Exception
    *           the exception
    */
-  private static void parseJSON(String artistLine, String titleLine) throws Exception {
-    System.out.println("EchonestSongAttributes.retrieveInfo(" + artistLine + ", " + titleLine + ")");
-    JSONObject sumObject = null;
-
+  private static void parseJSON(String artistLine, String titleLine) throws IOException {
+    System.out
+        .println("EchonestSongAttributes.parseJSON(" + artistLine + ", " + titleLine + ")");
+    String Path ="";
+    InputStream is = getEchonestInputStream(artistLine, titleLine);
+    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+    String line = "";
+    while ((line = br.readLine()) != null) {
+      Path = Path + line;
+    }
     try {
-      InputStream is = getEchonestInputStream(artistLine, titleLine);
-      String Path = "";
-      try {
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String line = "";
-        while ((line = br.readLine()) != null) {
-          Path = Path + line;
-        }
-      } catch (IOException ex) {
-        Logger.getLogger(EchonestSongAttributes.class.getName()).log(Level.SEVERE, null, ex);
-      }
-
-      trackTime();
-
-      JSONObject outerObject;
-      JSONObject objectInArray = null;
-      outerObject = new JSONObject(Path);
-      JSONObject innerObject = outerObject.getJSONObject("response");
-      JSONArray songArray = innerObject.getJSONArray("songs");
-      objectInArray = songArray.getJSONObject(0);
-      sumObject = objectInArray.getJSONObject("audio_summary");
-
+      JSONObject sumObject = sumObject(Path);
       bpms = getJsonStringObject(sumObject, "tempo");
       key = getJsonStringObject(sumObject, "key");
       danceability = getJsonStringObject(sumObject, "danceability");
@@ -230,7 +213,6 @@ class EchonestSongAttributes {
           + ((Double.parseDouble(getJsonStringObject(sumObject, "energy")) + (Double
               .parseDouble(getJsonStringObject(sumObject, "valence")))) / 2);
       acousticness = getJsonStringObject(sumObject, "acousticness");
-
     } catch (JSONException ex) {
       if (!(!resetNoNum)) {
         bpms = "";
@@ -253,6 +235,19 @@ class EchonestSongAttributes {
     }
   }
 
+  private static JSONObject sumObject(String Path)
+      throws JSONException{
+    JSONObject sumObject = null;
+      JSONObject outerObject;
+      JSONObject objectInArray = null;
+      outerObject = new JSONObject(Path);
+      JSONObject innerObject = outerObject.getJSONObject("response");
+      JSONArray songArray = innerObject.getJSONArray("songs");
+      objectInArray = songArray.getJSONObject(0);
+      sumObject = objectInArray.getJSONObject("audio_summary");
+    return sumObject;
+  }
+
   /**
    * Parses the xml.
    *
@@ -265,8 +260,7 @@ class EchonestSongAttributes {
    * @return the array list
    */
   static ArrayList<String> retrieveEchoInfo(String artist, String title, boolean bypassDuplicate) {
-    System.out.println("EchonestSongAttributes.parseXml(" + artist + ", " + title + ", "
-        + bypassDuplicate + ")");
+    System.out.println("EchonestSongAttributes.parseXml(" + artist + ", " + title + ", "+ bypassDuplicate + ")");
     byPass = bypassDuplicate;
     artists = artist.trim();
     if (!(title.contains("(") || title.contains(")"))) {
