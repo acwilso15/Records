@@ -125,7 +125,7 @@ class RecommendationTable {
 			// clear existing rows
 			while (originalModel.getRowCount() > 0) {
 				originalModel.removeRow(0);
-				if (RecordsMain.getUI().tabbedPane_1.getSelectedIndex() == 1) {
+				if (RecordsMain.getUI().recommendationsTabPane.getSelectedIndex() == 1) {
 					RecordsMain.getUI().BasedOn.setVisible(false);
 				} else {
 					RecordsMain.getUI().BasedOn.setVisible(true);
@@ -147,7 +147,7 @@ class RecommendationTable {
 				data.add(results.getString("LOCATION"));
 
 				originalModel.addRow(data.toArray());
-				if (RecordsMain.getUI().tabbedPane_1.getSelectedIndex() == 1) {
+				if (RecordsMain.getUI().recommendationsTabPane.getSelectedIndex() == 1) {
 					RecordsMain.getUI().BasedOn.setVisible(false);
 				} else {
 					RecordsMain.getUI().BasedOn.setVisible(true);
@@ -201,7 +201,7 @@ class RecommendationTable {
 		addToCheckCounter(RecordsMain.getUI().BillboardEDMCheckbox);
 		addToCheckCounter(RecordsMain.getUI().BillboardCountryCheckbox);
 		addToCheckCounter(RecordsMain.getUI().BillboardRnBCheckbox);
-		addToCheckCounter(RecordsMain.getUI().HypeCheckbox);
+		addToCheckCounter(RecordsMain.getUI().hypemCheckbox);
 		addToCheckCounter(RecordsMain.getUI().ShazamCheckbox);
 		addToCheckCounter(RecordsMain.getUI().ItunesCheckbox);
 		addToCheckCounter(RecordsMain.getUI().ItunesCountryCheckbox);
@@ -225,7 +225,7 @@ class RecommendationTable {
 						"Billboard-Country");
 				appendSQL(RecordsMain.getUI().BillboardRnBCheckbox, x,
 						"Billboard-RnB");
-				appendSQL(RecordsMain.getUI().HypeCheckbox, x, "Hypem");
+				appendSQL(RecordsMain.getUI().hypemCheckbox, x, "Hypem");
 				appendSQL(RecordsMain.getUI().ShazamCheckbox, x, "Shazam");
 				appendSQL(RecordsMain.getUI().ItunesCheckbox, x, "Itunes-Pop");
 				appendSQL(RecordsMain.getUI().ItunesCountryCheckbox, x,

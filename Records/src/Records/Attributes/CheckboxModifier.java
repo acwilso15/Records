@@ -123,7 +123,7 @@ public class CheckboxModifier {
 			SQLStatement = appendSQL(numOfCheckedBoxes, SQLStatement,
 					"songs.Location LIKE '%Billboard-RnB%'");
 		}
-		if (!(RecordsMain.getUI().HypeCheckbox.isSelected())) {
+		if (!(RecordsMain.getUI().hypemCheckbox.isSelected())) {
 			notCheckedBoxes.add("Hypem");
 		} else {
 			numOfCheckedBoxes++;
@@ -210,7 +210,7 @@ public class CheckboxModifier {
    * @param model the new chart count label
    */
   private static void setChartCountLabel(DefaultTableModel model) {
-    if (RecordsMain.getUI().tabbedPane_1.getSelectedIndex() == 1) {
+    if (RecordsMain.getUI().recommendationsTabPane.getSelectedIndex() == 1) {
     	RecordsMain.getUI().BasedOn.setVisible(false);
     	if (model.getRowCount() == 1) {
     		RecordsMain.getUI().chartSongNum.setText(model
