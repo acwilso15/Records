@@ -820,6 +820,13 @@ public class UserInterface extends JFrame {
       @Override
       public void keyPressed(KeyEvent evt) {
         // TODO add your handling code here:
+        keyPressedActionPrefTable(evt);
+      }
+
+      /**
+       * @param evt
+       */
+      private void keyPressedActionPrefTable(KeyEvent evt) {
         String song = null;
         String artist = null;
         String album;
@@ -855,15 +862,14 @@ public class UserInterface extends JFrame {
           image = "";
 
           try {
-            ResultSet results = RecordsMain.dba.getImagepath(album);
-            if (results.next()) {
-              image = results.getString("Image");
-            }
+            image = retrieveDBImagePath(album, image);
 
             ResultSet result;
             if ("Directory".equals(location)) {
               result = RecordsMain.dba.getLibFilePathway(song, artist);
-              setCurrentPath(result);
+              if (result.next()) {
+                setCurrentPath(result);
+              }
             } else {
               result = RecordsMain.dba.getFilePathway(song, artist);
               if (result.next()) {
@@ -914,6 +920,13 @@ public class UserInterface extends JFrame {
           }
         }
       }
+
+      /**
+       * @param album
+       * @param image
+       * @return
+       * @throws SQLException
+       */
     });
 
     songPrefTable.addMouseListener(new MouseAdapter() {
@@ -939,10 +952,7 @@ public class UserInterface extends JFrame {
         location = list.get(6).toString();
         image = "";
         try {
-          ResultSet results = RecordsMain.dba.getImagepath(album);
-          if (results.next()) {
-            image = results.getString("Image");
-          }
+          image = retrieveDBImagePath(album, image);
 
           ResultSet result;
           if ("Directory".equals(location)) {
@@ -1051,10 +1061,7 @@ public class UserInterface extends JFrame {
           image = "";
 
           try {
-            ResultSet results = RecordsMain.dba.getImagepath(album);
-            if (results.next()) {
-              image = results.getString("Image");
-            }
+            image = retrieveDBImagePath(album, image);
 
             ResultSet result = RecordsMain.dba.getFilePathway(song, artist);
             if (result.next()) {
@@ -1406,10 +1413,7 @@ public class UserInterface extends JFrame {
 
         BasedOn.setText("Based On: " + song + " by " + artist);
         try {
-          ResultSet results = RecordsMain.dba.getImagepath(album);
-          if (results.next()) {
-            image = results.getString("Image");
-          }
+          image = retrieveDBImagePath(album, image);
 
           ResultSet result = RecordsMain.dba.getLibFilePathway(song, artist);
           if (result.next()) {
@@ -1456,104 +1460,7 @@ public class UserInterface extends JFrame {
     userLibrary.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent evt) {
-        String Danceability;
-        String Energy;
-        String Acousticness;
-        String song = null;
-        String artist = null;
-        String album;
-        String genre;
-        String bpm;
-        String theKey;
-        String location = null;
-        String image;
-        if ((evt.getKeyCode() == KeyEvent.VK_DOWN) || (evt.getKeyCode() == KeyEvent.VK_UP)) {
-          itunesDownloadButton.setVisible(false);
-          amazonDownloadButton.setVisible(false);
-
-          int row = getUserLibrary().getSelectedRow();
-          song = getUserLibrary().getModel().getValueAt(row, 0).toString();
-          String songView = getUserLibrary().getValueAt(row, 0).toString();
-          if (row < getUserLibrary().getRowCount() - 1) {
-            row = getUserLibrary().getSelectedRow() + 1;
-          }
-          if (evt.getKeyCode() == KeyEvent.VK_UP) {
-            if (row < getUserLibrary().getRowCount() - 1) {
-              row = getUserLibrary().getSelectedRow() - 1;
-            }
-          }
-          ArrayList<String> list = TableAttributeAdjuster.AdjustAttributes(song, songView,
-              getUserLibrary(), row);
-
-          song = list.get(0).toString();
-          artist = list.get(1).toString();
-          album = list.get(2).toString();
-          genre = list.get(3).toString();
-          Energy = list.get(4).toString();
-          Danceability = list.get(5).toString();
-          Acousticness = list.get(6).toString();
-          bpm = list.get(7).toString();
-          theKey = list.get(8).toString();
-          location = "Directory";
-          image = "";
-
-          BasedOn.setText("Based On: " + song + " by " + artist);
-
-          try {
-            ResultSet results = RecordsMain.dba.getImagepath(album);
-            if (results.next()) {
-              image = results.getString("Image");
-            }
-
-            ResultSet result = RecordsMain.dba.getLibFilePathway(song, artist);
-            if (result.next()) {
-              setCurrentPath(result);
-            }
-
-          } catch (SQLException ex) {
-            ex.printStackTrace();
-          }
-
-          titleTextField.setText(song);
-          artistTextField.setText(artist);
-          albumTextField.setText(album);
-          genreTextField.setText(genre);
-          bpmTextField.setText(bpm);
-          keyTextField.setText(theKey);
-          locationTextField.setText(location);
-          startAlbumCoverReplacer(location, image);
-
-          RecommendationTable.recommendations(song, theKey, bpm, genre, album, artist, location,
-              Danceability, Energy, Acousticness);
-        }
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-          location = locationTextField.getText();
-          song = titleTextField.getText();
-          artist = artistTextField.getText();
-          try {
-            ResultSet result;
-            if ("Directory".equals(location)) {
-              result = RecordsMain.dba.getLibFilePathway(song, artist);
-              if (result.next()) {
-                setCurrentPath(result);
-              }
-            } else {
-              result = RecordsMain.dba.getFilePathway(song, artist);
-              if (result.next()) {
-                setCurrentPath(result);
-              }
-            }
-
-            if (PlayerUserInterface.getmusicPlayer() != null) {
-              PlayerUserInterface.getmusicPlayer().close();
-            }
-            beginMarquee(song + " - " + artist);
-            PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
-
-          } catch (SQLException ex) {
-            Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
-          }
-        }
+        keyPressedActionUserLibrary(evt);
       }
     });
   }
@@ -1643,5 +1550,113 @@ public class UserInterface extends JFrame {
         BeatportCheckbox.doClick();
       }
     }
+  }
+
+  /**
+   * @param evt
+   */
+  private void keyPressedActionUserLibrary(KeyEvent evt) {
+    String Danceability;
+    String Energy;
+    String Acousticness;
+    String song = null;
+    String artist = null;
+    String album;
+    String genre;
+    String bpm;
+    String theKey;
+    String location = null;
+    String image;
+    if ((evt.getKeyCode() == KeyEvent.VK_DOWN) || (evt.getKeyCode() == KeyEvent.VK_UP)) {
+      itunesDownloadButton.setVisible(false);
+      amazonDownloadButton.setVisible(false);
+
+      int row = getUserLibrary().getSelectedRow();
+      song = getUserLibrary().getModel().getValueAt(row, 0).toString();
+      String songView = getUserLibrary().getValueAt(row, 0).toString();
+      if (row < getUserLibrary().getRowCount() - 1) {
+        row = getUserLibrary().getSelectedRow() + 1;
+      }
+      if (evt.getKeyCode() == KeyEvent.VK_UP) {
+        if (row < getUserLibrary().getRowCount() - 1) {
+          row = getUserLibrary().getSelectedRow() - 1;
+        }
+      }
+      ArrayList<String> list = TableAttributeAdjuster.AdjustAttributes(song, songView,
+          getUserLibrary(), row);
+
+      song = list.get(0).toString();
+      artist = list.get(1).toString();
+      album = list.get(2).toString();
+      genre = list.get(3).toString();
+      Energy = list.get(4).toString();
+      Danceability = list.get(5).toString();
+      Acousticness = list.get(6).toString();
+      bpm = list.get(7).toString();
+      theKey = list.get(8).toString();
+      location = "Directory";
+      image = "";
+
+      BasedOn.setText("Based On: " + song + " by " + artist);
+
+      try {
+        image = retrieveDBImagePath(album, image);
+
+        ResultSet result = RecordsMain.dba.getLibFilePathway(song, artist);
+        if (result.next()) {
+          setCurrentPath(result);
+        }
+
+      } catch (SQLException ex) {
+        ex.printStackTrace();
+      }
+
+      titleTextField.setText(song);
+      artistTextField.setText(artist);
+      albumTextField.setText(album);
+      genreTextField.setText(genre);
+      bpmTextField.setText(bpm);
+      keyTextField.setText(theKey);
+      locationTextField.setText(location);
+      startAlbumCoverReplacer(location, image);
+
+      RecommendationTable.recommendations(song, theKey, bpm, genre, album, artist, location,
+          Danceability, Energy, Acousticness);
+    }
+    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+      location = locationTextField.getText();
+      song = titleTextField.getText();
+      artist = artistTextField.getText();
+      try {
+        ResultSet result;
+        if ("Directory".equals(location)) {
+          result = RecordsMain.dba.getLibFilePathway(song, artist);
+          if (result.next()) {
+            setCurrentPath(result);
+          }
+        } else {
+          result = RecordsMain.dba.getFilePathway(song, artist);
+          if (result.next()) {
+            setCurrentPath(result);
+          }
+        }
+
+        if (PlayerUserInterface.getmusicPlayer() != null) {
+          PlayerUserInterface.getmusicPlayer().close();
+        }
+        beginMarquee(song + " - " + artist);
+        PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
+
+      } catch (SQLException ex) {
+        Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+  }
+  public String retrieveDBImagePath(String album, String image) throws SQLException {
+    ResultSet results = RecordsMain.dba.getImagepath(album);
+    if (results.next()) {
+      image = results.getString("Image");
+    }
+    return image;
   }
 }
