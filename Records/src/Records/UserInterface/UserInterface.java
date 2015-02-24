@@ -278,22 +278,6 @@ public class UserInterface extends JFrame {
   }
 
   /**
-   * @param song
-   * @param artist
-   * @param Loc
-   * @return
-   */
-  private ResultSet getPlayerSongPathway(String song, String artist, String Loc) {
-    ResultSet result;
-    if ("Directory".equals(Loc)) {
-      result = RecordsMain.dba.getLibFilePathway(song, artist);
-    } else {
-      result = RecordsMain.dba.getFilePathway(song, artist);
-    }
-    return result;
-  }
-
-  /**
    * Gets the user library.
    *
    * @return the user library
@@ -595,7 +579,7 @@ public class UserInterface extends JFrame {
 
     JLabel RecSettingsLabel = new JLabel("Recommendation Settings");
     RecSettingsLabel.setFont(new Font("Arial", Font.BOLD, 14));
-    RecSettingsLabel.setBounds(690, 102, 184, 17);
+    RecSettingsLabel.setBounds(690, 108, 184, 17);
     contentPane.add(RecSettingsLabel);
 
     SelectAllCheckBox = new JCheckBox("All Charts");
@@ -611,7 +595,7 @@ public class UserInterface extends JFrame {
     contentPane.add(SelectAllCheckBox);
 
     JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
-    tabbedPane.setBounds(690, 125, 620, 130);
+    tabbedPane.setBounds(690, 127, 620, 130);
     contentPane.add(tabbedPane);
 
     JPanel PopPane = new JPanel();
@@ -648,7 +632,7 @@ public class UserInterface extends JFrame {
     ShazamCheckbox = new JCheckBox("Shazam Top 100 Chart");
     ShazamCheckbox.addItemListener(new ItemListener() {
       @Override
-      public void itemStateChanged(ItemEvent e) {
+      public void itemStateChanged(final ItemEvent e) {
         CheckboxModifier.locateRssCharts();
       }
     });
@@ -660,7 +644,7 @@ public class UserInterface extends JFrame {
     HypeCheckbox = new JCheckBox("Hype Machine Top 40 Chart");
     HypeCheckbox.addItemListener(new ItemListener() {
       @Override
-      public void itemStateChanged(ItemEvent e) {
+      public void itemStateChanged(final ItemEvent e) {
         CheckboxModifier.locateRssCharts();
       }
     });
@@ -771,7 +755,7 @@ public class UserInterface extends JFrame {
 
     JLabel lblYourRecommendations = new JLabel("Your Recommendations");
     lblYourRecommendations.setFont(new Font("Arial", Font.BOLD, 14));
-    lblYourRecommendations.setBounds(690, 252, 184, 33);
+    lblYourRecommendations.setBounds(690, 257, 184, 33);
     contentPane.add(lblYourRecommendations);
 
     chartSongNum = new JLabel("0 Songs");
@@ -844,13 +828,12 @@ public class UserInterface extends JFrame {
           } else {
             row = songPrefTable.getSelectedRow() + 1;
           }
-          if (evt.getKeyCode() == KeyEvent.VK_UP) {
+          if (evt.getKeyCode() == KeyEvent.VK_UP)
             if (!(row < songPrefTable.getRowCount() - 1)) {
               row = songPrefTable.getSelectedRow();
             } else {
               row = songPrefTable.getSelectedRow() - 1;
             }
-          }
 
           song = songPrefTable.getModel().getValueAt(row, 0).toString();
           artist = songPrefTable.getModel().getValueAt(row, 1).toString();
@@ -1181,7 +1164,7 @@ public class UserInterface extends JFrame {
     JLabel RecommendationBox = new JLabel("");
     RecommendationBox.setOpaque(true);
     RecommendationBox.setBorder(new LineBorder(Color.DARK_GRAY, 4));
-    RecommendationBox.setBounds(680, 100, 650, 578);
+    RecommendationBox.setBounds(675, 93, 650, 578);
     contentPane.add(RecommendationBox);
 
     JLabel libraryLabel = new JLabel("Your Library");
@@ -1336,40 +1319,196 @@ public class UserInterface extends JFrame {
     contentPane.add(btnFeedback);
   }
 
+  /**
+   * @param evt
+   */
+  private void keyPressedActionUserLibrary(KeyEvent evt) {
+    String Danceability;
+    String Energy;
+    String Acousticness;
+    String song = null;
+    String artist = null;
+    String album;
+    String genre;
+    String bpm;
+    String theKey;
+    String location = null;
+    String image;
+    if ((evt.getKeyCode() == KeyEvent.VK_DOWN) || (evt.getKeyCode() == KeyEvent.VK_UP)) {
+      itunesDownloadButton.setVisible(false);
+      amazonDownloadButton.setVisible(false);
+
+      int row = getUserLibrary().getSelectedRow();
+      song = getUserLibrary().getModel().getValueAt(row, 0).toString();
+      String songView = getUserLibrary().getValueAt(row, 0).toString();
+      if (row < getUserLibrary().getRowCount() - 1) {
+        row = getUserLibrary().getSelectedRow() + 1;
+      }
+      if (evt.getKeyCode() == KeyEvent.VK_UP) {
+        if (row < getUserLibrary().getRowCount() - 1) {
+          row = getUserLibrary().getSelectedRow() - 1;
+        }
+      }
+      ArrayList<String> list = TableAttributeAdjuster.AdjustAttributes(song, songView,
+          getUserLibrary(), row);
+
+      song = list.get(0).toString();
+      artist = list.get(1).toString();
+      album = list.get(2).toString();
+      genre = list.get(3).toString();
+      Energy = list.get(4).toString();
+      Danceability = list.get(5).toString();
+      Acousticness = list.get(6).toString();
+      bpm = list.get(7).toString();
+      theKey = list.get(8).toString();
+      location = "Directory";
+      image = "";
+
+      BasedOn.setText("Based On: " + song + " by " + artist);
+
+      try {
+        image = retrieveDBImagePath(album, image);
+
+        ResultSet result = RecordsMain.dba.getLibFilePathway(song, artist);
+        if (result.next()) {
+          setCurrentPath(result);
+        }
+
+      } catch (SQLException ex) {
+        ex.printStackTrace();
+      }
+
+      titleTextField.setText(song);
+      artistTextField.setText(artist);
+      albumTextField.setText(album);
+      genreTextField.setText(genre);
+      bpmTextField.setText(bpm);
+      keyTextField.setText(theKey);
+      locationTextField.setText(location);
+      startAlbumCoverReplacer(location, image);
+
+      RecommendationTable.recommendations(song, theKey, bpm, genre, album, artist, location,
+          Danceability, Energy, Acousticness);
+    }
+    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+      location = locationTextField.getText();
+      song = titleTextField.getText();
+      artist = artistTextField.getText();
+      try {
+        ResultSet result;
+        if ("Directory".equals(location)) {
+          result = RecordsMain.dba.getLibFilePathway(song, artist);
+          if (result.next()) {
+            setCurrentPath(result);
+          }
+        } else {
+          result = RecordsMain.dba.getFilePathway(song, artist);
+          if (result.next()) {
+            setCurrentPath(result);
+          }
+        }
+
+        if (PlayerUserInterface.getmusicPlayer() != null) {
+          PlayerUserInterface.getmusicPlayer().close();
+        }
+        beginMarquee(song + " - " + artist);
+        PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
+
+      } catch (SQLException ex) {
+        Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+  }
+
   private void playReaction() {
     String song = titleTextField.getText();
     String artist = artistTextField.getText();
     String location = locationTextField.getText();
 
-    ResultSet result;
     if (PlayerUserInterface.getmusicPlayer() == null) {
-      try {
-        startMediaPlayer(song, location, artist);
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
+        beginMarquee(song + " - " + artist);
+        PlayerUserInterface.PlayButton(location, song, artist);
     } else {
       if (PlayerUserInterface.getStatus() != null) {
         switch (PlayerUserInterface.getStatus()) {
         case "PLAYING":
           PlayerUserInterface.StopButton();
-          try {
-            startMediaPlayer(song, location, artist);
-          } catch (SQLException e) {
-            e.printStackTrace();
-          }
+          beginMarquee(song + " - " + artist);
+          PlayerUserInterface.PlayButton(location, song, artist);
           break;
         case "PAUSED":
           PlayerUserInterface.ResumeButton();
           break;
         case "STOPPED":
-          try {
-            startMediaPlayer(song, location, artist);
-          } catch (SQLException e) {
-            e.printStackTrace();
-          }
+          beginMarquee(song + " - " + artist);
+          PlayerUserInterface.PlayButton(location, song, artist);
           break;
         }
+      }
+    }
+  }
+
+  public String retrieveDBImagePath(String album, String image) throws SQLException {
+    ResultSet results = RecordsMain.dba.getImagepath(album);
+    if (results.next()) {
+      image = results.getString("Image");
+    }
+    return image;
+  }
+
+  /**
+   * 
+   */
+  private void selectCheckboxAllClickReaction() {
+    if (!(SelectAllCheckBox.isSelected())) {
+      BillboardCheckbox.doClick();
+      BillboardEDMCheckbox.doClick();
+      BillboardCountryCheckbox.doClick();
+      BillboardRnBCheckbox.doClick();
+      HypeCheckbox.doClick();
+      ItunesCheckbox.doClick();
+      ItunesCountryCheckbox.doClick();
+      ItunesRnBCheckbox.doClick();
+      ItunesEDMCheckbox.doClick();
+      UKCheckbox.doClick();
+      ShazamCheckbox.doClick();
+      BeatportCheckbox.doClick();
+    } else {
+      if (!BillboardCheckbox.isSelected()) {
+        BillboardCheckbox.doClick();
+      }
+      if (!BillboardEDMCheckbox.isSelected()) {
+        BillboardEDMCheckbox.doClick();
+      }
+      if (!BillboardCountryCheckbox.isSelected()) {
+        BillboardCountryCheckbox.doClick();
+      }
+      if (!BillboardRnBCheckbox.isSelected()) {
+        BillboardRnBCheckbox.doClick();
+      }
+      if (!HypeCheckbox.isSelected()) {
+        HypeCheckbox.doClick();
+      }
+      if (!ItunesCheckbox.isSelected()) {
+        ItunesCheckbox.doClick();
+      }
+      if (!ShazamCheckbox.isSelected()) {
+        ShazamCheckbox.doClick();
+      }
+      if (!ItunesCountryCheckbox.isSelected()) {
+        ItunesCountryCheckbox.doClick();
+      }
+      if (!ItunesRnBCheckbox.isSelected()) {
+        ItunesRnBCheckbox.doClick();
+      }
+      if (!ItunesEDMCheckbox.isSelected()) {
+        ItunesEDMCheckbox.doClick();
+      }
+      if (!UKCheckbox.isSelected()) {
+        UKCheckbox.doClick();
+      }
+      if (!BeatportCheckbox.isSelected()) {
+        BeatportCheckbox.doClick();
       }
     }
   }
@@ -1478,185 +1617,5 @@ public class UserInterface extends JFrame {
       Switch = new AlbumCoverReplacer(location, image);
       Switch.start();
     }
-  }
-
-  /**
-   * @param song
-   * @param Loc
-   * @param result
-   * @throws SQLException
-   */
-  private void startMediaPlayer(String song, String location, String artist) throws SQLException {
-    ResultSet result = getPlayerSongPathway(song, artist, location);
-    if (result.next()) {
-      PlayerUserInterface.PlayButton(result.getString("FilePathway").replaceAll("~", "'"),
-          location, song);
-    }
-    beginMarquee(song + " - " + artist);
-  }
-
-  /**
-   * 
-   */
-  private void selectCheckboxAllClickReaction() {
-    if (!(SelectAllCheckBox.isSelected())) {
-      BillboardCheckbox.doClick();
-      BillboardEDMCheckbox.doClick();
-      BillboardCountryCheckbox.doClick();
-      BillboardRnBCheckbox.doClick();
-      HypeCheckbox.doClick();
-      ItunesCheckbox.doClick();
-      ItunesCountryCheckbox.doClick();
-      ItunesRnBCheckbox.doClick();
-      ItunesEDMCheckbox.doClick();
-      UKCheckbox.doClick();
-      ShazamCheckbox.doClick();
-      BeatportCheckbox.doClick();
-    } else {
-      if (!BillboardCheckbox.isSelected()) {
-        BillboardCheckbox.doClick();
-      }
-      if (!BillboardEDMCheckbox.isSelected()) {
-        BillboardEDMCheckbox.doClick();
-      }
-      if (!BillboardCountryCheckbox.isSelected()) {
-        BillboardCountryCheckbox.doClick();
-      }
-      if (!BillboardRnBCheckbox.isSelected()) {
-        BillboardRnBCheckbox.doClick();
-      }
-      if (!HypeCheckbox.isSelected()) {
-        HypeCheckbox.doClick();
-      }
-      if (!ItunesCheckbox.isSelected()) {
-        ItunesCheckbox.doClick();
-      }
-      if (!ShazamCheckbox.isSelected()) {
-        ShazamCheckbox.doClick();
-      }
-      if (!ItunesCountryCheckbox.isSelected()) {
-        ItunesCountryCheckbox.doClick();
-      }
-      if (!ItunesRnBCheckbox.isSelected()) {
-        ItunesRnBCheckbox.doClick();
-      }
-      if (!ItunesEDMCheckbox.isSelected()) {
-        ItunesEDMCheckbox.doClick();
-      }
-      if (!UKCheckbox.isSelected()) {
-        UKCheckbox.doClick();
-      }
-      if (!BeatportCheckbox.isSelected()) {
-        BeatportCheckbox.doClick();
-      }
-    }
-  }
-
-  /**
-   * @param evt
-   */
-  private void keyPressedActionUserLibrary(KeyEvent evt) {
-    String Danceability;
-    String Energy;
-    String Acousticness;
-    String song = null;
-    String artist = null;
-    String album;
-    String genre;
-    String bpm;
-    String theKey;
-    String location = null;
-    String image;
-    if ((evt.getKeyCode() == KeyEvent.VK_DOWN) || (evt.getKeyCode() == KeyEvent.VK_UP)) {
-      itunesDownloadButton.setVisible(false);
-      amazonDownloadButton.setVisible(false);
-
-      int row = getUserLibrary().getSelectedRow();
-      song = getUserLibrary().getModel().getValueAt(row, 0).toString();
-      String songView = getUserLibrary().getValueAt(row, 0).toString();
-      if (row < getUserLibrary().getRowCount() - 1) {
-        row = getUserLibrary().getSelectedRow() + 1;
-      }
-      if (evt.getKeyCode() == KeyEvent.VK_UP) {
-        if (row < getUserLibrary().getRowCount() - 1) {
-          row = getUserLibrary().getSelectedRow() - 1;
-        }
-      }
-      ArrayList<String> list = TableAttributeAdjuster.AdjustAttributes(song, songView,
-          getUserLibrary(), row);
-
-      song = list.get(0).toString();
-      artist = list.get(1).toString();
-      album = list.get(2).toString();
-      genre = list.get(3).toString();
-      Energy = list.get(4).toString();
-      Danceability = list.get(5).toString();
-      Acousticness = list.get(6).toString();
-      bpm = list.get(7).toString();
-      theKey = list.get(8).toString();
-      location = "Directory";
-      image = "";
-
-      BasedOn.setText("Based On: " + song + " by " + artist);
-
-      try {
-        image = retrieveDBImagePath(album, image);
-
-        ResultSet result = RecordsMain.dba.getLibFilePathway(song, artist);
-        if (result.next()) {
-          setCurrentPath(result);
-        }
-
-      } catch (SQLException ex) {
-        ex.printStackTrace();
-      }
-
-      titleTextField.setText(song);
-      artistTextField.setText(artist);
-      albumTextField.setText(album);
-      genreTextField.setText(genre);
-      bpmTextField.setText(bpm);
-      keyTextField.setText(theKey);
-      locationTextField.setText(location);
-      startAlbumCoverReplacer(location, image);
-
-      RecommendationTable.recommendations(song, theKey, bpm, genre, album, artist, location,
-          Danceability, Energy, Acousticness);
-    }
-    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-      location = locationTextField.getText();
-      song = titleTextField.getText();
-      artist = artistTextField.getText();
-      try {
-        ResultSet result;
-        if ("Directory".equals(location)) {
-          result = RecordsMain.dba.getLibFilePathway(song, artist);
-          if (result.next()) {
-            setCurrentPath(result);
-          }
-        } else {
-          result = RecordsMain.dba.getFilePathway(song, artist);
-          if (result.next()) {
-            setCurrentPath(result);
-          }
-        }
-
-        if (PlayerUserInterface.getmusicPlayer() != null) {
-          PlayerUserInterface.getmusicPlayer().close();
-        }
-        beginMarquee(song + " - " + artist);
-        PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
-
-      } catch (SQLException ex) {
-        Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }
-  }
-  public String retrieveDBImagePath(String album, String image) throws SQLException {
-    ResultSet results = RecordsMain.dba.getImagepath(album);
-    if (results.next()) {
-      image = results.getString("Image");
-    }
-    return image;
   }
 }
