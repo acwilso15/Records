@@ -44,10 +44,10 @@ public class EmailWindow extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 
 	/** The subject line. */
-	public JTextField subjectLine;
+	JTextField subjectLine;
 
 	/** The ex description. */
-	public JTextArea exDescription;
+	JTextArea exDescription;
 
 	/**
 	 * Create the dialog.

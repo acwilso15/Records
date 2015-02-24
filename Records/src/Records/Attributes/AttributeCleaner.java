@@ -11,7 +11,7 @@ import org.apache.commons.lang.WordUtils;
  *
  * @author Alexander
  */
-public class AttributeCleaner {
+class AttributeCleaner {
 
   /**
    * Capitalize.
@@ -33,7 +33,7 @@ public class AttributeCleaner {
    *          the word
    * @return the string
    */
-  public static String clean(String word) {
+  static String clean(String word) {
     System.out.println("AttributeCleaner.clean(" + word + ")");
     return word.replaceAll("〜", "").replace("'", "").replaceAll(";", "");
   }
@@ -118,7 +118,7 @@ public class AttributeCleaner {
    *          the attribute
    * @return the string
    */
-  public static String cleanAttribute(String type, String attribute) {
+  static String cleanAttribute(String type, String attribute) {
     System.out.println("AttributeCleaner.cleanAttribute(" + type + "," + attribute + ")");
     if (!isPureAscii(attribute) || attribute.toLowerCase().contains("feat")
         || attribute.toLowerCase().contains("featuring") || attribute.toLowerCase().contains("ft")

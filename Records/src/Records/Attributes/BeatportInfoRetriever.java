@@ -21,7 +21,7 @@ import org.jsoup.select.Elements;
  *
  * @author Alexander
  */
-public class BeatportInfoRetriever {
+class BeatportInfoRetriever {
 
 	/**
 	 * Gets the album.
@@ -86,7 +86,7 @@ public class BeatportInfoRetriever {
 	 *            the artist
 	 * @return the info
 	 */
-	public static ArrayList<String> getInfo(String title, String artist) {
+	static ArrayList<String> getInfo(String title, String artist) {
 		System.out.println("BeatportInfoRetriever.getInfo(" + title + ", "
 				+ artist + ")");
 		title = AttributeCleaner.cleanAttribute("Title", title).replaceAll(" ",

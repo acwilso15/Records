@@ -20,7 +20,7 @@ public class DuplicateChecker {
    *
    * @return the hm
    */
-  public static HashMap getHm() {
+  private static HashMap getHm() {
     return hm;
   }
 
@@ -33,7 +33,7 @@ public class DuplicateChecker {
    *          the artist
    * @return the values
    */
-  public static ArrayList<String> getValues(String Title, String Artist, boolean byPassDuplicate) {
+  static ArrayList<String> getValues(String Title, String Artist, boolean byPassDuplicate) {
     System.out.println("DuplicateEntry.getValues(" + Title + ", " + Artist + ", " + byPassDuplicate + ")");
     if (isDuplicate(Title, Artist, byPassDuplicate)) {
       valSet = null;
@@ -57,7 +57,7 @@ public class DuplicateChecker {
    *          the artist
    * @return true, if is duplicate
    */
-  public static boolean isDuplicate(String Title, String Artist, boolean byPass) {
+  static boolean isDuplicate(String Title, String Artist, boolean byPass) {
     System.out.println("DuplicateEntry.isDuplicate(" + Title + ", " + Artist + ")");
     if (byPass == false) {
       if (getHm().containsKey(Title + "," + Artist)) {

@@ -8,7 +8,7 @@ import Records.Database.DatabaseSetup;
  *
  * @author Alexander
  */
-public class FeedDataPaths {
+class FeedDataPaths {
 
 	/** The Url path. */
 	private final String UrlPath;
@@ -64,7 +64,7 @@ public class FeedDataPaths {
 	 * @param Order
 	 *            the order
 	 */
-	public FeedDataPaths(String UrlPath, String Location, String Token,
+	FeedDataPaths(String UrlPath, String Location, String Token,
 			String xpathTitle, String xpathArtist, String InType,
 			String[][] RssString, int numOfSongs, int numVar, String Order) {
 		this.UrlPath = UrlPath;

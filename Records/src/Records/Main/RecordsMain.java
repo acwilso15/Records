@@ -50,7 +50,7 @@ public class RecordsMain {
 	 *
 	 * @return the filePathList
 	 */
-	public static ArrayList getFilePathList() {
+	public static ArrayList<String> getFilePathList() {
 		System.out.println("RecordsMain.getFilePathList()");
 		return filePathList;
 	}

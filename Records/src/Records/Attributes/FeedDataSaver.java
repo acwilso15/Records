@@ -192,7 +192,7 @@ public class FeedDataSaver {
 	 * @param key
 	 *            the key
 	 */
-	public void readFeeds(FeedDataPaths key) {
+	void readFeeds(FeedDataPaths key) {
 		System.out.println("FeedDataSaver.readFeeds(" + key + ")");
 
 		String UrlPath = key.getUrlPath();

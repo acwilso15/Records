@@ -266,7 +266,7 @@ public class UserInterface extends JFrame {
    * @param songLine
    *          the song line
    */
-  public void beginMarquee(String songLine) {
+  private void beginMarquee(String songLine) {
     RecordsMain.marqTest.setText(songLine);
     if (!(songLine.length() > 26)) {
       RecordsMain.marqTest.stopMoving();
@@ -1329,7 +1329,7 @@ public class UserInterface extends JFrame {
     contentPane.add(btnFeedback);
   }
 
-  public void playReaction() {
+  private void playReaction() {
     String song = titleTextField.getText();
     String artist = artistTextField.getText();
     String location = locationTextField.getText();
@@ -1591,7 +1591,7 @@ public class UserInterface extends JFrame {
   /**
    * 
    */
-  public void selectCheckboxAllClickReaction() {
+  private void selectCheckboxAllClickReaction() {
     if (!(SelectAllCheckBox.isSelected())) {
       BillboardCheckbox.doClick();
       BillboardEDMCheckbox.doClick();

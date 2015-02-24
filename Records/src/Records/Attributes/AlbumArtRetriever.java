@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  *
  * @author Alexander
  */
-public class AlbumArtRetriever {
+class AlbumArtRetriever {
 
 	/**
 	 * Art opt one.
@@ -163,7 +163,7 @@ public class AlbumArtRetriever {
 	 *            the album
 	 * @return the string
 	 */
-	public static String createDirectory(String title, String artist, String album) {
+	static String createDirectory(String title, String artist, String album) {
 		String image;
 		File dir = new File(
 				"C:\\Users\\Alexander\\Documents\\MuRec\\ItunesMediaDatabase\\Images\\"

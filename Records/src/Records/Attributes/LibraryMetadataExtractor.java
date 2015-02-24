@@ -34,7 +34,7 @@ public class LibraryMetadataExtractor {
 	 *            the val set
 	 * @return the album
 	 */
-	public static String getAlbum(AbstractID3v2Tag v2tag, Tag tag,
+	static String getAlbum(AbstractID3v2Tag v2tag, Tag tag,
 			ArrayList<String> valSet) {
 		System.out.println("LibraryMetadataExtractor.getAlbum()");
 		String album;
@@ -60,7 +60,7 @@ public class LibraryMetadataExtractor {
 	 *            the tag
 	 * @return the artist
 	 */
-	public static String getArtist(AbstractID3v2Tag v2tag, Tag tag) {
+	static String getArtist(AbstractID3v2Tag v2tag, Tag tag) {
 		System.out.println("LibraryMetadataExtractor.getArtist()");
 		String artist;
 		if (tag == null) {
@@ -139,7 +139,7 @@ public class LibraryMetadataExtractor {
 	 *            the val set
 	 * @return the key
 	 */
-	public static String getKey(AbstractID3v2Tag v2tag, Tag tag,
+	static String getKey(AbstractID3v2Tag v2tag, Tag tag,
 			ArrayList<String> valSet) {
 		System.out.println("LibraryMetadataExtractor.getKey()");
 		String key;
@@ -164,7 +164,7 @@ public class LibraryMetadataExtractor {
 	 *            the tag
 	 * @return the title
 	 */
-	public static String getTitle(AbstractID3v2Tag v2tag, Tag tag) {
+	static String getTitle(AbstractID3v2Tag v2tag, Tag tag) {
 		System.out.println("LibraryMetadataExtractor.getTitle()");
 		String title;
 		if (tag == null) {
@@ -203,7 +203,7 @@ public class LibraryMetadataExtractor {
 	 *            the song
 	 * @return the m p3 file
 	 */
-	public static MP3File setMP3File(File song) {
+	static MP3File setMP3File(File song) {
 		System.out.println("LibraryMetadataExtractor.setMP3File("
 				+ song.getAbsolutePath() + ")");
 		MP3File g = null;
@@ -225,7 +225,7 @@ public class LibraryMetadataExtractor {
 	 *            the song
 	 * @return the tag
 	 */
-	public static Tag setTag(File song) {
+	static Tag setTag(File song) {
 		System.out.println("LibraryMetadataExtractor.setTag("
 				+ song.getAbsolutePath() + ")");
 
@@ -248,7 +248,7 @@ public class LibraryMetadataExtractor {
 	 *            the mp3
 	 * @return the abstract i d3v2 tag
 	 */
-	public static AbstractID3v2Tag setv2Tag(MP3File mp3) {
+	static AbstractID3v2Tag setv2Tag(MP3File mp3) {
 		System.out.println("LibraryMetadataExtractor.setv2Tag()");
 		AbstractID3v2Tag v2tag = null;
 		if (mp3 != null) {
