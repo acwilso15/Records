@@ -205,7 +205,9 @@ public class CheckboxModifier {
 	}
 
   /**
-   * @param model
+   * Sets the chart count label.
+   *
+   * @param model the new chart count label
    */
   private static void setChartCountLabel(DefaultTableModel model) {
     if (RecordsMain.getUI().tabbedPane_1.getSelectedIndex() == 1) {

@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class EchonestSongAttributes.
  *
@@ -25,8 +26,10 @@ import org.json.JSONObject;
 class EchonestSongAttributes {
 
   /**
-   * @param attributeToConvert
-   * @return
+   * Adds the zeros.
+   *
+   * @param attributeToConvert the attribute to convert
+   * @return the string
    */
   public static String addZeros(String attributeToConvert) {
     if (attributeToConvert == null || "".equals(attributeToConvert)) {
@@ -146,10 +149,12 @@ class EchonestSongAttributes {
   }
 
   /**
-   * @param artistLine
-   * @param titleLine
-   * @return
-   * @throws IOException
+   * Gets the echonest input stream.
+   *
+   * @param artistLine the artist line
+   * @param titleLine the title line
+   * @return the echonest input stream
+   * @throws IOException Signals that an I/O exception has occurred.
    */
   private static InputStream getEchonestInputStream(String artistLine, String titleLine)
       throws IOException {
@@ -160,6 +165,14 @@ class EchonestSongAttributes {
     return is;
   }
 
+  /**
+   * Gets the echonest url.
+   *
+   * @param artistLine the artist line
+   * @param titleLine the title line
+   * @return the echonest url
+   * @throws MalformedURLException the malformed url exception
+   */
   private static URL getEchonestUrl(String artistLine, String titleLine)
       throws MalformedURLException {
     String site = "http://developer.echonest.com/api/v4/song/search?api_key=LXSEHQYDQJBY8GYMO&format=json&artist="
@@ -171,7 +184,11 @@ class EchonestSongAttributes {
   }
 
   /**
-   * @param sumObject
+   * Gets the json string object.
+   *
+   * @param sumObject the sum object
+   * @param lookupName the lookup name
+   * @return the json string object
    */
   private static String getJsonStringObject(JSONObject sumObject, String lookupName) {
     String attribute;
@@ -187,12 +204,9 @@ class EchonestSongAttributes {
   /**
    * Retrieve info.
    *
-   * @param artistLine
-   *          the artist line
-   * @param titleLine
-   *          the title line
-   * @throws Exception
-   *           the exception
+   * @param artistLine          the artist line
+   * @param titleLine          the title line
+   * @throws IOException Signals that an I/O exception has occurred.
    */
   private static void parseJSON(String artistLine, String titleLine) throws IOException {
     System.out
@@ -235,6 +249,13 @@ class EchonestSongAttributes {
     }
   }
 
+  /**
+   * Sum object.
+   *
+   * @param Path the path
+   * @return the JSON object
+   * @throws JSONException the JSON exception
+   */
   private static JSONObject sumObject(String Path)
       throws JSONException{
     JSONObject sumObject = null;

@@ -164,6 +164,17 @@ class RecommendationTable {
 		}
 	}
 
+	/**
+	 * Results.
+	 *
+	 * @param bpm the bpm
+	 * @param genre the genre
+	 * @param Danceability the danceability
+	 * @param Energy the energy
+	 * @param Acousticness the acousticness
+	 * @return the result set
+	 * @throws NumberFormatException the number format exception
+	 */
 	private static ResultSet results(String bpm, String genre,
 			String Danceability, String Energy, String Acousticness)
 			throws java.lang.NumberFormatException {

@@ -110,6 +110,9 @@ public class FeedDataSender extends Thread {
 		System.out.println("RSS Import Complete!");
 	}
 
+  /**
+   * Save data.
+   */
   private void saveData() {
     for (FeedDataPaths key : keys) {
       saveData.readFeeds(key);

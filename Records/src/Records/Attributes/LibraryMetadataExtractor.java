@@ -259,10 +259,6 @@ public class LibraryMetadataExtractor {
 
 	/** The library metadata extractor product. */
 	private LibraryMetadataExtractorProduct libraryMetadataExtractorProduct = new LibraryMetadataExtractorProduct();
-
-	/** The Location. */
-	private static String Location = "Directory";
-
 	/**
 	 * Instantiates a new library metadata extractor.
 	 *

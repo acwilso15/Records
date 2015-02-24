@@ -8,6 +8,7 @@ package Records.Attributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class DuplicateChecker.
  *
@@ -27,10 +28,9 @@ public class DuplicateChecker {
   /**
    * Gets the values.
    *
-   * @param Title
-   *          the title
-   * @param Artist
-   *          the artist
+   * @param Title          the title
+   * @param Artist          the artist
+   * @param byPassDuplicate the by pass duplicate
    * @return the values
    */
   static ArrayList<String> getValues(String Title, String Artist, boolean byPassDuplicate) {
@@ -51,10 +51,9 @@ public class DuplicateChecker {
   /**
    * Checks if is duplicate.
    *
-   * @param Title
-   *          the title
-   * @param Artist
-   *          the artist
+   * @param Title          the title
+   * @param Artist          the artist
+   * @param byPass the by pass
    * @return true, if is duplicate
    */
   static boolean isDuplicate(String Title, String Artist, boolean byPass) {

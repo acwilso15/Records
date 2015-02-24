@@ -143,6 +143,7 @@ public class MusicPlayer extends Thread {
 	/** The sources. */
 	private String filename;
 
+	/** The sources. */
 	private String sources;
 
 	/** The get time. */
@@ -268,6 +269,11 @@ public class MusicPlayer extends Thread {
 		EndDur = Min + ":" + Secs;
 	}
 
+	/**
+	 * Gets the duration timer.
+	 *
+	 * @return the duration timer
+	 */
 	private int getDurationTimer() {
 		return DurationTimer;
 	}
@@ -393,14 +399,30 @@ public class MusicPlayer extends Thread {
 
 	}
 
+	/**
+	 * Sets the duration timer.
+	 *
+	 * @param durationTimer the new duration timer
+	 */
 	private void setDurationTimer(int durationTimer) {
 		DurationTimer = durationTimer;
 	}
 
+	/**
+	 * Checks if is timing.
+	 *
+	 * @return true, if is timing
+	 */
 	public boolean isTiming() {
 		return timing;
 	}
 
+	/**
+	 * Sets the timing.
+	 *
+	 * @param timing the timing
+	 * @return true, if successful
+	 */
 	private boolean setTiming(boolean timing) {
 		this.timing = timing;
 		return timing;

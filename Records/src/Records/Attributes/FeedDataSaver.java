@@ -114,6 +114,14 @@ public class FeedDataSaver {
 		return nameExpr;
 	}
 
+  /**
+   * Check path.
+   *
+   * @param xpathTitle the xpath title
+   * @param xpathArtist the xpath artist
+   * @param x the x
+   * @return the string
+   */
   private String checkPath(String xpathTitle, String xpathArtist, int x) {
     String path;
     if (x == 0) {
@@ -171,6 +179,16 @@ public class FeedDataSaver {
 		return trackNameNodes;
 	}
 
+  /**
+   * Generate document.
+   *
+   * @param UrlPath the url path
+   * @param key the key
+   * @return the document
+   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws ParserConfigurationException the parser configuration exception
+   * @throws SAXException the SAX exception
+   */
   private Document generateDocument(String UrlPath, FeedDataPaths key) throws java.io.IOException,
       javax.xml.parsers.ParserConfigurationException, org.xml.sax.SAXException {
     URL url = new URL(UrlPath);

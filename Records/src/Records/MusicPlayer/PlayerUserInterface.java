@@ -46,12 +46,9 @@ public class PlayerUserInterface {
   /**
    * Play button.
    *
-   * @param currentSongPath
-   *          the current song path
-   * @param location
-   *          the location
-   * @param title
-   *          the title
+   * @param location          the location
+   * @param title          the title
+   * @param artist the artist
    */
   public static void PlayButton(String location, String title, String artist) {
     ResultSet result = getPlayerSongPathway(title, artist, location);
@@ -111,10 +108,12 @@ public class PlayerUserInterface {
   }
 
   /**
-   * @param song
-   * @param artist
-   * @param Loc
-   * @return
+   * Gets the player song pathway.
+   *
+   * @param song the song
+   * @param artist the artist
+   * @param Loc the loc
+   * @return the player song pathway
    */
   public static ResultSet getPlayerSongPathway(String song, String artist, String Loc) {
     ResultSet result;

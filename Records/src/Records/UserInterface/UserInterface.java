@@ -58,6 +58,7 @@ import Records.Database.LibraryUpdaterImp;
 import Records.Main.RecordsMain;
 import Records.MusicPlayer.PlayerUserInterface;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class UserInterface.
  */
@@ -75,8 +76,7 @@ public class UserInterface extends JFrame {
   /**
    * Sets the current path.
    *
-   * @param aCurrentPath
-   *          the CurrentPath to set
+   * @param result the new current path
    */
   private static void setCurrentPath(ResultSet result) {
     try {
@@ -1320,7 +1320,9 @@ public class UserInterface extends JFrame {
   }
 
   /**
-   * @param evt
+   * Key pressed action user library.
+   *
+   * @param evt the evt
    */
   private void keyPressedActionUserLibrary(KeyEvent evt) {
     String Danceability;
@@ -1420,6 +1422,9 @@ public class UserInterface extends JFrame {
     }
   }
 
+  /**
+   * Play reaction.
+   */
   private void playReaction() {
     String song = titleTextField.getText();
     String artist = artistTextField.getText();
@@ -1448,6 +1453,14 @@ public class UserInterface extends JFrame {
     }
   }
 
+  /**
+   * Retrieve db image path.
+   *
+   * @param album the album
+   * @param image the image
+   * @return the string
+   * @throws SQLException the SQL exception
+   */
   public String retrieveDBImagePath(String album, String image) throws SQLException {
     ResultSet results = RecordsMain.dba.getImagepath(album);
     if (results.next()) {
@@ -1457,7 +1470,7 @@ public class UserInterface extends JFrame {
   }
 
   /**
-   * 
+   * Select checkbox all click reaction.
    */
   private void selectCheckboxAllClickReaction() {
     if (!(SelectAllCheckBox.isSelected())) {
@@ -1605,8 +1618,10 @@ public class UserInterface extends JFrame {
   }
 
   /**
-   * @param location
-   * @param image
+   * Start album cover replacer.
+   *
+   * @param location the location
+   * @param image the image
    */
   private void startAlbumCoverReplacer(String location, String image) {
     if (Switch == null) {
