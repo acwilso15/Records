@@ -27,7 +27,7 @@ class AttributeCleaner {
   }
 
   /**
-   * Clean.
+   * Clean
    *
    * @param word
    *          the word
@@ -35,7 +35,7 @@ class AttributeCleaner {
    */
   static String clean(String word) {
     System.out.println("AttributeCleaner.clean(" + word + ")");
-    return word.replaceAll("〜", "").replace("'", "").replaceAll(";", "");
+    return word.replace("'", "").replaceAll(";", "");
   }
 
   /**
@@ -122,7 +122,7 @@ class AttributeCleaner {
     System.out.println("AttributeCleaner.cleanAttribute(" + type + "," + attribute + ")");
     if (!isPureAscii(attribute) || attribute.toLowerCase().contains("feat")
         || attribute.toLowerCase().contains("featuring") || attribute.toLowerCase().contains("ft")
-        || attribute.toLowerCase().contains("&") || attribute.toLowerCase().contains(",")) {
+        || attribute.toLowerCase().contains("&") || attribute.toLowerCase().contains(",") || attribute.toLowerCase().contains("vs")) {
       if (type.equals("Artist")) {
         attribute = cleanArtist(attribute);
       } else if (type.equals("Title")) {
@@ -180,8 +180,5 @@ class AttributeCleaner {
   }
 
   /** The ascii encoder. */
-  private static CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder(); // or
-                                                                                         // "ISO-8859-1"
-                                                                                         // for ISO
-                                                                                         // Latin 1
+  private static CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
 }

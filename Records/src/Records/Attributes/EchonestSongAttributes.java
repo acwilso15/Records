@@ -158,30 +158,18 @@ class EchonestSongAttributes {
    */
   private static InputStream getEchonestInputStream(String artistLine, String titleLine)
       throws IOException {
-    URL url = getEchonestUrl(artistLine, titleLine);
+    String site = "http://developer.echonest.com/api/v4/song/search?api_key=LXSEHQYDQJBY8GYMO&format=json&artist="
+        + artistLine.replaceAll(" ", "%20")
+        + "&title="
+        + titleLine.replaceAll(" ", "%20").replaceAll("&", "")
+        + "&results=1&bucket=audio_summary&bucket=song_type&bucket=song_hotttnesss&bucket=song_discovery";
+    URL url =  new URL(site);
     System.out.println(url);
     InputStream is = url.openStream();
     trackTime();
     return is;
   }
 
-  /**
-   * Gets the echonest url.
-   *
-   * @param artistLine the artist line
-   * @param titleLine the title line
-   * @return the echonest url
-   * @throws MalformedURLException the malformed url exception
-   */
-  private static URL getEchonestUrl(String artistLine, String titleLine)
-      throws MalformedURLException {
-    String site = "http://developer.echonest.com/api/v4/song/search?api_key=LXSEHQYDQJBY8GYMO&format=json&artist="
-        + artistLine.replaceAll(" ", "%20")
-        + "&title="
-        + titleLine.replaceAll(" ", "%20").replaceAll("&", "")
-        + "&results=1&bucket=audio_summary&bucket=song_type&bucket=song_hotttnesss&bucket=song_discovery";
-    return new URL(site);
-  }
 
   /**
    * Gets the json string object.
@@ -259,13 +247,13 @@ class EchonestSongAttributes {
   private static JSONObject sumObject(String Path)
       throws JSONException{
     JSONObject sumObject = null;
-      JSONObject outerObject;
-      JSONObject objectInArray = null;
-      outerObject = new JSONObject(Path);
-      JSONObject innerObject = outerObject.getJSONObject("response");
-      JSONArray songArray = innerObject.getJSONArray("songs");
-      objectInArray = songArray.getJSONObject(0);
-      sumObject = objectInArray.getJSONObject("audio_summary");
+    JSONObject outerObject;
+    JSONObject objectInArray = null;
+    outerObject = new JSONObject(Path);
+    JSONObject innerObject = outerObject.getJSONObject("response");
+    JSONArray songArray = innerObject.getJSONArray("songs");
+    objectInArray = songArray.getJSONObject(0);
+    sumObject = objectInArray.getJSONObject("audio_summary");
     return sumObject;
   }
 
@@ -300,7 +288,7 @@ class EchonestSongAttributes {
 
     if (PreviewURL.equals("") || PurchaseLink.equals("") || albumTitles.equals("")
         || RssGenres.equals("")) {
-      ArrayList<String> beatportValSet = BeatportInfoRetriever.getInfo(title, artist);
+      ArrayList<String> beatportValSet = BeatportInfoRetriever.getBeatportInfo(title, artist);
       if (PurchaseLink.equals("")) {
         PurchaseLink = beatportValSet.get(1).toString();
       }
