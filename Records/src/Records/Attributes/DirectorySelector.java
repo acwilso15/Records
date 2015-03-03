@@ -48,12 +48,11 @@ public class DirectorySelector implements Runnable {
 		chooser.setApproveButtonText("Import");
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int result = chooser.showSaveDialog(chooser);
-		if (!(result == JFileChooser.APPROVE_OPTION))
 			if (result == JFileChooser.CANCEL_OPTION) {
 				System.out
 						.println("Cancel was selected...Restarting update...");
 				LibraryUpdaterImp.startUpdate();
-			} else {
+			} else if (result == JFileChooser.APPROVE_OPTION){
 				File f = chooser.getSelectedFile();
 
 				RecordsMain.dba.truncateLibTables();
@@ -65,11 +64,9 @@ public class DirectorySelector implements Runnable {
 					try {
 						RecordsMain.dba.dropDirectory();
 						RecordsMain.dba.createDirectory();
-						RecordsMain.dba.insertLibDirectoryPath(f
-								.getAbsolutePath());
+						RecordsMain.dba.insertLibDirectoryPath(f.getAbsolutePath());
 					} catch (SQLException ex1) {
-						Logger.getLogger(DirectorySelector.class.getName())
-								.log(Level.SEVERE, null, ex1);
+								ex.printStackTrace();
 					}
 				}
 

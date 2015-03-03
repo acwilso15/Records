@@ -65,15 +65,6 @@ import Records.MusicPlayer.PlayerUserInterface;
 public class UserInterface extends JFrame {
 
   /**
-   * Gets the current path.
-   *
-   * @return the current path
-   */
-  private static String getCurrentPath() {
-    return CurrentPath;
-  }
-
-  /**
    * Sets the current path.
    *
    * @param result
@@ -839,7 +830,7 @@ public class UserInterface extends JFrame {
    * Inits the hypem checkbox.
    */
   private void initHypemCheckbox() {
-    hypemCheckbox = new JCheckBox("Hype Machine Top 40 Chart");
+    hypemCheckbox = new JCheckBox("Hype Machine Top 20 Chart");
     hypemCheckbox.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(final ItemEvent e) {

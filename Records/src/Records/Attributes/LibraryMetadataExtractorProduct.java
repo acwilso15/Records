@@ -31,16 +31,15 @@ class LibraryMetadataExtractorProduct {
 			String title = LibraryMetadataExtractor.getTitle(ID3v2Tag, null);
 			String artist = LibraryMetadataExtractor.getArtist(ID3v2Tag, null);
 			ArrayList<String> valSet = EchonestSongAttributes.retrieveEchoInfo(artist, title, byPassDuplicate);
-			String album = LibraryMetadataExtractor.getAlbum(ID3v2Tag, null,
-					valSet);
+			String album = LibraryMetadataExtractor.getAlbum(ID3v2Tag, null, valSet);
 			set.add(title + "_" + artist + "_" + album);
 			set.add(title);
 			set.add(artist);
 			set.add(album);
 			set.add(LibraryMetadataExtractor.getGenre(ID3v2Tag, null, valSet));
-			set.add(AttributeCleaner.clean(valSet.get(5)));
-			set.add(AttributeCleaner.clean(valSet.get(4)));
-			set.add(AttributeCleaner.clean(valSet.get(6)));
+			set.add(valSet.get(5));
+			set.add(valSet.get(4));
+			set.add(valSet.get(6));
 			set.add(LibraryMetadataExtractor.getBPM(ID3v2Tag, null, valSet));
 			set.add(LibraryMetadataExtractor.getKey(ID3v2Tag, null, valSet));
 			set.add(AlbumArtRetriever.createDirectory(title, artist, album));
@@ -50,17 +49,16 @@ class LibraryMetadataExtractorProduct {
 			String title = LibraryMetadataExtractor.getTitle(null, tag)
 					.replaceAll(",", "");
 			String artist = LibraryMetadataExtractor.getArtist(null, tag);
-			ArrayList<String> valSet = EchonestSongAttributes.retrieveEchoInfo(artist, title,
-					true);
+			ArrayList<String> valSet = EchonestSongAttributes.retrieveEchoInfo(artist, title, true);
 			String album = LibraryMetadataExtractor.getAlbum(null, tag, valSet);
 			set.add(title + "_" + artist + "_" + album);
 			set.add(title);
 			set.add(artist);
 			set.add(album);
 			set.add(LibraryMetadataExtractor.getGenre(null, tag, valSet));
-			set.add(AttributeCleaner.clean(valSet.get(5)));
-			set.add(AttributeCleaner.clean(valSet.get(4)));
-			set.add(AttributeCleaner.clean(valSet.get(6)));
+			set.add(valSet.get(5));
+			set.add(valSet.get(4));
+			set.add(valSet.get(6));
 			set.add(LibraryMetadataExtractor.getBPM(null, tag, valSet));
 			set.add(LibraryMetadataExtractor.getKey(null, tag, valSet));
 			set.add(AlbumArtRetriever.createDirectory(title, artist, album));

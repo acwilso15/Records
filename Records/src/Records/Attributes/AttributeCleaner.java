@@ -159,12 +159,12 @@ public class AttributeCleaner {
     System.out.println("EchonestSongAttributes.stripPerenthesis(" + titleLine + ")");
     titleLine = checkPerenthesis(titleLine);
     String newTitle = titleLine;
-    if (!(titleLine.contains("remix)") || titleLine.contains("Remix)")
+    if (titleLine.contains("(") && !(titleLine.contains("remix)") || titleLine.contains("Remix)")
         || titleLine.contains("edit)") || titleLine.contains("mashup)"))) {
       String removeString = titleLine.substring(titleLine.indexOf("("), titleLine.indexOf(")"));
       System.out.println(removeString);
       newTitle = titleLine.replace(removeString, "").replace(")", "").trim();
-    }
+      }
     System.out.println("stripPerenthesis = " + newTitle);
     return newTitle;
   }

@@ -55,9 +55,9 @@ public class FeedDataSaver {
    * @param aCurSavedSong
    *          the CurSavedSong to set
    */
-  private static void setCurSavedSong(String aCurSavedSong) {
-    System.out.println("FeedDataSaver.setCurSavedSong(" + aCurSavedSong + ")");
-    CurSavedSong = aCurSavedSong;
+  private static void setCurSavedSong(String RssTitle, String musicians, String location) {
+    System.out.println("Importing " + RssTitle + " by: " + musicians);
+    CurSavedSong = "Importing: " + RssTitle + " - " + musicians + " - " + location;
   }
 
   /**
@@ -219,7 +219,6 @@ public class FeedDataSaver {
         } else {
           String trackString = getTrackNodes(key, UrlPath, xpathTitle, xpathArtist, 0).item(i)
               .getTextContent().replace(" - ", "~").replace((i + 1) + ":", "").trim();
-
           if (Order.equals("Artist_Title")) {
             artist = trackString.substring(0, trackString.indexOf("~")).replace("~", "");
             title = trackString.replace(artist, "");
@@ -259,19 +258,14 @@ public class FeedDataSaver {
    */
   private void Save(String Token, String Location, String title, String artist) {
     System.out.println("FeedDataSaver.Save(" + Token + ", " + Location + ", " + title + ", "+ artist + ")");
-
-    setRssSongCounter(getRssSongCounter() + 1);
-
+    boolean byPassDuplicate = false;
     String bpms, theKeys, Danceability, Energy, Acousticness, albumTitles, RssGenres;
     String RssTitle = AttributeCleaner.cleanAttribute("Title", title).replace("~", "");
     String musicians = AttributeCleaner.cleanAttribute("Artist", artist).replace("~", "");
+    setRssSongCounter(getRssSongCounter() + 1);
+    setCurSavedSong(RssTitle, musicians, Location);
 
-    setCurSavedSong("Importing: " + RssTitle + " - " + musicians + " - " + Location);
-    System.out.println("Importing " + RssTitle + " by: " + musicians);
-
-    boolean byPassDuplicate = false;
     valSet = DuplicateChecker.getValues(RssTitle.replaceAll("/", "-"), musicians, byPassDuplicate);
-
     if (valSet == null) {
       String previousLocation;
       int feedDataSize = getFeedData().size();

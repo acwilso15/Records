@@ -51,19 +51,19 @@ public class FeedDataSender extends Thread {
     keys.add(new FeedDataPaths("http://hypem.com/feed/popular/feed.xml", "Hypem", "~",
         "rss/channel/item/title", "rss/channel/item/title", "XML", null, 20, 1, "Artist_Title"));
 
-    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=50/xml",
+    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=100/xml",
         "Itunes-Pop", "~", "feed/entry/title", "feed/entry/title", "XML", null, 40, 1,
         "Title_Artist"));
 
-    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=50/genre=6/xml",
+    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=100/genre=6/xml",
         "Itunes-Country", "~", "feed/entry/title", "feed/entry/title", "XML", null, 40, 1,
         "Title_Artist"));
 
-    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=50/genre=15/xml",
+    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=100/genre=15/xml",
         "Itunes-RnB", "~", "feed/entry/title", "feed/entry/title", "XML", null, 40, 1,
         "Title_Artist"));
 
-    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=50/genre=7/xml",
+    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=100/genre=7/xml",
         "Itunes-EDM", "~", "feed/entry/title", "feed/entry/title", "XML", null, 40, 1,
         "Title_Artist"));
 
