@@ -1535,7 +1535,7 @@ public class UserInterface extends JFrame {
           PlayerUserInterface.getmusicPlayer().close();
         }
         beginMarquee(song + " - " + artist);
-        PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
+        PlayerUserInterface.PlayButton(location, song, artist);
 
       } catch (SQLException ex) {
         Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -1611,7 +1611,7 @@ public class UserInterface extends JFrame {
           PlayerUserInterface.getmusicPlayer().close();
         }
         beginMarquee(song + " - " + artist);
-        PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
+        PlayerUserInterface.PlayButton(location, song, artist);
 
       } catch (SQLException ex) {
         Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -1719,8 +1719,7 @@ public class UserInterface extends JFrame {
           PlayerUserInterface.getmusicPlayer().close();
         }
         beginMarquee(song + " - " + artist);
-        PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
-
+        PlayerUserInterface.PlayButton(location, song, artist);
       } catch (SQLException ex) {
         Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -1820,8 +1819,7 @@ public class UserInterface extends JFrame {
           PlayerUserInterface.getmusicPlayer().close();
         }
         beginMarquee(song + " - " + artist);
-        PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
-
+        PlayerUserInterface.PlayButton(location, song, artist);
       } catch (SQLException ex) {
         Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -1912,8 +1910,7 @@ public class UserInterface extends JFrame {
           PlayerUserInterface.getmusicPlayer().close();
         }
         beginMarquee(song + " - " + artist);
-        PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
-
+        PlayerUserInterface.PlayButton(location, song, artist);
       } catch (SQLException ex) {
         Logger.getLogger(UserInterface.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -1968,7 +1965,7 @@ public class UserInterface extends JFrame {
         PlayerUserInterface.getmusicPlayer().close();
       }
       beginMarquee(song + " - " + artist);
-      PlayerUserInterface.PlayButton(getCurrentPath(), location, song);
+      PlayerUserInterface.PlayButton(location, song, artist);
     }
   }
 

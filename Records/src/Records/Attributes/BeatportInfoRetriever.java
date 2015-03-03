@@ -67,12 +67,22 @@ public class BeatportInfoRetriever {
   public static ArrayList<String> getValueSet(JSONObject beatportObject, String site) {
     System.out.println("BeatportInfoRetriever.getValueSet(" + beatportObject + ", " + site + ")");
     ArrayList<String> beatportValueSet = new ArrayList<String>();
-    beatportValueSet.add(getTrackURL(beatportObject));
-    beatportValueSet.add(getPurchaseLink(beatportObject, site));
-    beatportValueSet.add(getAlbum(beatportObject));
-    beatportValueSet.add(getGenre(beatportObject));
-    beatportValueSet.add(getBPM(beatportObject));
-    beatportValueSet.add(getKey(beatportObject));
+    if (beatportObject != null) {
+      beatportValueSet.add(getTrackURL(beatportObject));
+      beatportValueSet.add(getPurchaseLink(beatportObject, site));
+      beatportValueSet.add(getAlbum(beatportObject));
+      beatportValueSet.add(getGenre(beatportObject));
+      beatportValueSet.add(getBPM(beatportObject));
+      beatportValueSet.add(getKey(beatportObject));
+    }
+    else{
+      beatportValueSet.add("");
+      beatportValueSet.add("");
+      beatportValueSet.add("");
+      beatportValueSet.add("");
+      beatportValueSet.add("");
+      beatportValueSet.add("");
+    }
     return beatportValueSet;
   }
 

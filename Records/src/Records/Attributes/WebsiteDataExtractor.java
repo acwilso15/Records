@@ -47,19 +47,7 @@ class WebsiteDataExtractor {
 				+ ", " + token + ", " + location + ")");
 
 		int counter = 0;
-		Document doc = null;
-		try {
-			doc = Jsoup.connect(site).get();
-		} catch (SocketTimeoutException ex) {
-			extractWebDataToArray(site, docSelect, docAttribute, numOfSongs,
-					token, location);
-		} catch (MalformedURLException ex) {
-			Logger.getLogger(WebsiteDataExtractor.class.getName()).log(
-					Level.SEVERE, null, ex);
-		} catch (IOException ex) {
-			Logger.getLogger(WebsiteDataExtractor.class.getName()).log(
-					Level.SEVERE, null, ex);
-		}
+		Document doc = getJSONDoc(site, docSelect, docAttribute, numOfSongs, token, location);
 		if (doc != null) {
 			Elements metalinks = doc.select(docSelect);
 			TopRss = new String[numOfSongs][2];
@@ -68,22 +56,40 @@ class WebsiteDataExtractor {
 				if ("Beatport".equals(location)) {
 					musicLink = parseBeatportJson(musicLink);
 				}
-				StringTokenizer stringtokenizer = new StringTokenizer(
-						musicLink, token);
+				StringTokenizer stringtokenizer = new StringTokenizer(musicLink, token);
 				if (stringtokenizer.hasMoreTokens()) {
-					try {
 						TopRss[counter][0] = stringtokenizer.nextToken();
 						TopRss[counter][1] = stringtokenizer.nextToken();
-					} catch (Exception ex) {
-						Logger.getLogger(WebsiteDataExtractor.class.getName())
-								.log(Level.SEVERE, null, ex);
-					}
 				}
 				counter++;
 			}
 		}
 		return TopRss;
 	}
+
+  /**
+   * @param site
+   * @param docSelect
+   * @param docAttribute
+   * @param numOfSongs
+   * @param token
+   * @param location
+   * @return
+   */
+  private static Document getJSONDoc(String site, String docSelect, String docAttribute,
+      int numOfSongs, String token, String location) {
+    Document doc = null;
+		try {
+			doc = Jsoup.connect(site).get();
+		} catch (SocketTimeoutException ex) {
+			extractWebDataToArray(site, docSelect, docAttribute, numOfSongs,
+					token, location);
+		} catch (IOException ex) {
+			Logger.getLogger(WebsiteDataExtractor.class.getName()).log(
+					Level.SEVERE, null, ex);
+		}
+    return doc;
+  }
 
 	/**
 	 * Parses the beatport json.

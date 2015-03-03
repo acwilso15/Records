@@ -275,7 +275,7 @@ class EchonestSongAttributes {
     if (!(title.contains("(") || title.contains(")"))) {
       titles = title;
     } else {
-      titles = stripPerenthesis(title);
+      titles = AttributeCleaner.stripParenthesis(title);
     }
 
     ArrayList<String> ItunesValSet = ItunesInfoRetriever.getInfo(titles, artists);
@@ -306,24 +306,7 @@ class EchonestSongAttributes {
     return valSet;
   }
 
-  /**
-   * Strip perenthesis.
-   *
-   * @param titleLine
-   *          the title line
-   * @return the string
-   */
-  private static String stripPerenthesis(String titleLine) {
-    System.out.println("EchonestSongAttributes.stripPerenthesis(" + titleLine + ")");
-
-    String newTitle = titleLine;
-    if (!(titleLine.contains("remix[)]") || titleLine.contains("Remix[)]")
-        || titleLine.contains("edit[)]") || titleLine.contains("mashup[)]"))) {
-      newTitle = newTitle.split("[(]")[0];
-    }
-    return newTitle;
-  }
-
+ 
   /**
    * Track time.
    */

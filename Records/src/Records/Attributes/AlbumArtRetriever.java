@@ -66,33 +66,23 @@ public class AlbumArtRetriever {
   /**
    * Art opt one.
    *
-   * @param is the is
+   * @param is
+   *          the is
    * @return the string
    */
-  private static String getLastFMAlbumArt(InputStream is) {
-    System.out.println("AlbumArtRetriever.artOptOne(" + is.toString() + ")");
+  private static String getLastFMAlbumArt(String stream) {
+    System.out.println("AlbumArtRetriever.artOptOne(" + stream + ")");
     String albArt = "";
-    String Path = null;
-
-    BufferedReader br = new BufferedReader(new InputStreamReader(is));
-    String line = "";
     try {
-      while ((line = br.readLine()) != null) {
-        System.out.println(line);
-        Path = Path + line;
-      }
       JSONObject objectInArray = null;
-      System.out.println(Path.replaceFirst("null", ""));
-      JSONObject outerObject = new JSONObject(Path.replaceFirst("null", "").trim()).getJSONObject(
-          "track").getJSONObject("album");
+      System.out.println(stream.replaceFirst("null", ""));
+      JSONObject outerObject = new JSONObject(stream.replaceFirst("null", "").trim())
+          .getJSONObject("track").getJSONObject("album");
       JSONArray songArray = outerObject.getJSONArray("image");
       objectInArray = songArray.getJSONObject(2);
       albArt = objectInArray.optString("#text");
     } catch (JSONException ex) {
       ex.printStackTrace();
-      albArt = "";
-    } catch (IOException e) {
-      e.printStackTrace();
       albArt = "";
     }
     return albArt;
@@ -101,17 +91,27 @@ public class AlbumArtRetriever {
   /**
    * Gets the last fm input stream.
    *
-   * @param title the title
-   * @param artist the artist
+   * @param title
+   *          the title
+   * @param artist
+   *          the artist
    * @return the last fm input stream
-   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
    */
-  private static InputStream getLastFMInputStream(String title, String artist) throws IOException {
+  private static String getLastFMStream(String title, String artist) throws IOException {
     String path = "http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=b379fee6480a2478ba7aa5d3faa2699c&format=json&artist="
         + artist + "&track=" + title;
     System.out.println(path);
-    URL url = new URL(path);
-    return url.openStream();
+    String stream = null;
+    
+    InputStream is = new URL(path).openStream();
+    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+    String line = "";
+    while ((line = br.readLine()) != null) {
+      stream = stream + line;
+    }
+    return stream;
   }
 
   /**
@@ -129,9 +129,9 @@ public class AlbumArtRetriever {
     title = title.replaceAll(" ", "%20");
     artist = artist.replaceAll(" ", "%20");
     try {
-      InputStream is = getLastFMInputStream(title, artist);
-      if (is != null) {
-        art = getLastFMAlbumArt(is);
+      String stream = getLastFMStream(title, artist);
+      if (stream != null) {
+        art = getLastFMAlbumArt(stream);
         if ("".equals(art)) {
           art = "Unknown";
         }
@@ -151,25 +151,22 @@ public class AlbumArtRetriever {
    *          the album
    * @param artist
    *          the artist
+   * @throws IOException
    */
-  private static void saveURLImage(String imageUrl, String album, String artist) {
-    try{  
+  private static void saveURLImage(String imageUrl, String album, String artist) throws IOException {
     FileUtils.forceMkdir(new File("C:\\Records\\Images\\" + artist + "\\" + album));
-      String destinationFile = "C:\\Records\\Images\\" + artist + "\\" + album + "\\" + album
-          + ".jpg";
-      URL url = new URL(imageUrl);
-      OutputStream os;
-      InputStream is = url.openStream();
-        os = new FileOutputStream(destinationFile);
-        byte[] b = new byte[2048];
-        int length;
-        while ((length = is.read(b)) != -1) {
-          os.write(b, 0, length);
-        }
-        os.close();
-      } catch (IOException ex) {
-        Logger.getLogger(AlbumArtRetriever.class.getName()).log(Level.SEVERE, null, ex);
-      }
+    String destinationFile = "C:\\Records\\Images\\" + artist + "\\" + album + "\\" + album
+        + ".jpg";
+    URL url = new URL(imageUrl);
+    OutputStream os;
+    InputStream is = url.openStream();
+    os = new FileOutputStream(destinationFile);
+    byte[] b = new byte[2048];
+    int length;
+    while ((length = is.read(b)) != -1) {
+      os.write(b, 0, length);
+    }
+    os.close();
   }
 
   /** The art. */

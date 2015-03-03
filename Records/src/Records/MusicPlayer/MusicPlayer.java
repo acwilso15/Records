@@ -382,8 +382,7 @@ public class MusicPlayer extends Thread {
 					int numBytesRemaining = nBytesRead;
 					getPlayTime();
 					while (numBytesRemaining > 0) {
-						numBytesRemaining -= playbackLine.write(data, 0,
-								numBytesRemaining);
+						numBytesRemaining -= playbackLine.write(data, 0, numBytesRemaining);
 					}
 
 				}
