@@ -27,10 +27,9 @@ class LibraryMetadataExtractorProduct {
 		if (FilenameUtils.isExtension(songFile.getAbsolutePath(), "mp3")) {
 			MP3File mp3 = LibraryMetadataExtractor.setMP3File(songFile);
 			AbstractID3v2Tag ID3v2Tag = LibraryMetadataExtractor.setv2Tag(mp3);
-			boolean	byPassDuplicate = true;
 			String title = LibraryMetadataExtractor.getTitle(ID3v2Tag, null);
 			String artist = LibraryMetadataExtractor.getArtist(ID3v2Tag, null);
-			ArrayList<String> valSet = EchonestSongAttributes.retrieveEchoInfo(artist, title, byPassDuplicate);
+			ArrayList<String> valSet = EchonestSongAttributes.retrieveEchoInfo(artist, title);
 			String album = LibraryMetadataExtractor.getAlbum(ID3v2Tag, null, valSet);
 			set.add(title + "_" + artist + "_" + album);
 			set.add(title);
@@ -49,7 +48,7 @@ class LibraryMetadataExtractorProduct {
 			String title = LibraryMetadataExtractor.getTitle(null, tag)
 					.replaceAll(",", "");
 			String artist = LibraryMetadataExtractor.getArtist(null, tag);
-			ArrayList<String> valSet = EchonestSongAttributes.retrieveEchoInfo(artist, title, true);
+			ArrayList<String> valSet = EchonestSongAttributes.retrieveEchoInfo(artist, title);
 			String album = LibraryMetadataExtractor.getAlbum(null, tag, valSet);
 			set.add(title + "_" + artist + "_" + album);
 			set.add(title);

@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,7 +16,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -82,9 +80,6 @@ public class FeedDataSaver {
   /** The Rss song counter. */
   private static int RssSongCounter;
 
-  /** The val set. */
-  private static ArrayList<String> valSet;
-
   /** The Cur saved song. */
   private static String CurSavedSong;
 
@@ -131,18 +126,10 @@ public class FeedDataSaver {
    * @throws XPathExpressionException
    *           the x path expression exception
    */
-  private NodeList getTrackNodes(FeedDataPaths key, String UrlPath, String xpathTitle,
-      String xpathArtist, int x) {
-    System.out.println("FeedDataSaver.getTrackNodes(" + key + "," + UrlPath + "," + xpathTitle
-        + "," + xpathArtist + "," + x + ")");
+  private NodeList getTrackNodes(FeedDataPaths key, String UrlPath, String path) {
+    System.out.println("FeedDataSaver.getTrackNodes(" + key + "," + UrlPath + "," + path + ")");
     NodeList trackNameNodes = null;
     try {
-      String path;
-      if (x == 0) {
-        path = xpathTitle;
-      } else {
-        path = xpathArtist;
-      }
       XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
       XPath xPathEvaluator = XPATH_FACTORY.newXPath();
       XPathExpression nameExpr = xPathEvaluator.compile(path);
@@ -196,7 +183,6 @@ public class FeedDataSaver {
     System.out.println("FeedDataSaver.readFeeds()");
     String UrlPath = key.getUrlPath();
     String Location = key.getLocation();
-    String Token = key.getToken();
     int numVar = key.getNumVar();
     String Order = key.getOrder();
     String xpathTitle = key.getXpathTitle();
@@ -204,7 +190,6 @@ public class FeedDataSaver {
     String InType = key.getInType();
     String[][] RssString = key.getRssString();
     int numOfSongs = key.getNumOfSongs();
-    System.out.println("Numvar = " + numVar);
 
     if (InType.equals("XML")) {
       for (int i = 0; i < numOfSongs; i++) {
@@ -212,13 +197,13 @@ public class FeedDataSaver {
         String title = "";
         String artist = "";
         if (numVar != 1) {
-          title = getTrackNodes(key, UrlPath, xpathTitle, xpathArtist, 0).item(i).getTextContent()
+          title = getTrackNodes(key, UrlPath, xpathTitle).item(i).getTextContent()
               .replace(" - ", "~").replace((i + 1) + ":", "").trim();
-          artist = getTrackNodes(key, UrlPath, xpathTitle, xpathArtist, 1).item(i).getTextContent()
+          artist = getTrackNodes(key, UrlPath, xpathArtist).item(i).getTextContent()
               .replace(" - ", "~").replace((i + 1) + ":", "").trim();
         } else {
-          String trackString = getTrackNodes(key, UrlPath, xpathTitle, xpathArtist, 0).item(i)
-              .getTextContent().replace(" - ", "~").replace((i + 1) + ":", "").trim();
+          String trackString = getTrackNodes(key, UrlPath, xpathTitle).item(i).getTextContent()
+              .replace(" - ", "~").replace((i + 1) + ":", "").trim();
           if (Order.equals("Artist_Title")) {
             artist = trackString.substring(0, trackString.indexOf("~")).replace("~", "");
             title = trackString.replace(artist, "");
@@ -227,7 +212,9 @@ public class FeedDataSaver {
             artist = trackString.replace(title, "");
           }
         }
-        Save(Token, Location, title, artist);
+        title = AttributeCleaner.cleanAttribute("Title", title).replace("~", "");
+        artist = AttributeCleaner.cleanAttribute("Artist", artist).replace("~", "");
+        save(Location, title, artist);
       }
     } else {
       for (int i = 0; i < numOfSongs; i++) {
@@ -241,7 +228,9 @@ public class FeedDataSaver {
           title = RssString[i][1];
           artist = RssString[i][0];
         }
-        Save(Token, Location, title, artist);
+        title = AttributeCleaner.cleanAttribute("Title", title).replace("~", "");
+        artist = AttributeCleaner.cleanAttribute("Artist", artist).replace("~", "");
+        save(Location, title, artist);
       }
     }
   }
@@ -256,16 +245,13 @@ public class FeedDataSaver {
    * @param RssString
    *          the rss string
    */
-  private void Save(String Token, String Location, String title, String artist) {
-    System.out.println("FeedDataSaver.Save(" + Token + ", " + Location + ", " + title + ", "+ artist + ")");
-    boolean byPassDuplicate = false;
+  void save(String Location, String title, String artist) {
+    System.out.println("FeedDataSaver.Save(" + Location + ", " + title + ", " + artist + ")");
     String bpms, theKeys, Danceability, Energy, Acousticness, albumTitles, RssGenres;
-    String RssTitle = AttributeCleaner.cleanAttribute("Title", title).replace("~", "");
-    String musicians = AttributeCleaner.cleanAttribute("Artist", artist).replace("~", "");
     setRssSongCounter(getRssSongCounter() + 1);
-    setCurSavedSong(RssTitle, musicians, Location);
+    setCurSavedSong(title, artist, Location);
+    ArrayList<String> valSet = DuplicateChecker.getValues(Location, title.replaceAll("/", "-"), artist);
 
-    valSet = DuplicateChecker.getValues(RssTitle.replaceAll("/", "-"), musicians, byPassDuplicate);
     if (valSet == null) {
       String previousLocation;
       int feedDataSize = getFeedData().size();
@@ -273,15 +259,15 @@ public class FeedDataSaver {
 
       for (int x = 0; x < feedDataSize; x++) {
         FeedDataStore feedVal = feedDataSet.get(x);
-        if (RssTitle.equals(feedVal.getRssTitle()) && musicians.equals(feedVal.getMusicians())) {
+        if (title.equals(feedVal.getRssTitle()) && artist.equals(feedVal.getMusicians())) {
           previousLocation = feedVal.getLocation();
           feedVal.setLocation(previousLocation + " " + Location);
           break;
         }
       }
     } else {
-      RssTitle = valSet.get(0);
-      musicians = valSet.get(1);
+      title = valSet.get(0);
+      artist = valSet.get(1);
       bpms = valSet.get(2);
       theKeys = valSet.get(3).replace(";", "");
       Danceability = valSet.get(4);
@@ -291,12 +277,12 @@ public class FeedDataSaver {
       RssGenres = valSet.get(8);
       String FilePathway = valSet.get(9);
       String PurchaseLink = valSet.get(10);
-      String Song_ID = RssTitle + "_" + musicians + "_" + albumTitles;
+      String Song_ID = title + "_" + artist + "_" + albumTitles;
       String images = "";
 
       getFeedData().add(
-          new FeedDataStore(Song_ID, RssTitle, bpms, RssGenres, Danceability, Energy, Acousticness,
-              theKeys, Location, FilePathway, PurchaseLink, albumTitles, images, musicians));
+          new FeedDataStore(Song_ID, title, bpms, RssGenres, Danceability, Energy, Acousticness,
+              theKeys, Location, FilePathway, PurchaseLink, albumTitles, images, artist));
     }
   }
 }

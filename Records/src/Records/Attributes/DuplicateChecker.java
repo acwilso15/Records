@@ -8,7 +8,6 @@ package Records.Attributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DuplicateChecker.
  *
@@ -33,12 +32,13 @@ public class DuplicateChecker {
    * @param byPassDuplicate the by pass duplicate
    * @return the values
    */
-  static ArrayList<String> getValues(String Title, String Artist, boolean byPassDuplicate) {
-    System.out.println("DuplicateEntry.getValues(" + Title + ", " + Artist + ", " + byPassDuplicate + ")");
-    if (isDuplicate(Title, Artist, byPassDuplicate)) {
+   static ArrayList<String> getValues(String location, String Title, String Artist) {
+    System.out.println("DuplicateEntry.getValues(" + Title + ", " + Artist + ")");
+    ArrayList<String> valSet;
+    if (isDuplicate(Title, Artist)) {
       valSet = null;
     } else {
-      valSet = EchonestSongAttributes.retrieveEchoInfo(Artist, Title, byPassDuplicate);
+      valSet = EchonestSongAttributes.retrieveEchoInfo(Artist, Title);
     }
     if (valSet != null) {
       String newTitle = valSet.get(0);
@@ -56,9 +56,8 @@ public class DuplicateChecker {
    * @param byPass the by pass
    * @return true, if is duplicate
    */
-  static boolean isDuplicate(String Title, String Artist, boolean byPass) {
+  static boolean isDuplicate(String Title, String Artist) {
     System.out.println("DuplicateEntry.isDuplicate(" + Title + ", " + Artist + ")");
-    if (byPass == false) {
       if (getHm().containsKey(Title + "," + Artist)) {
         System.out.println("----Duplicate found----");
         return true;
@@ -66,10 +65,6 @@ public class DuplicateChecker {
         System.out.println("----New Entry----");
         return false;
       }
-    } else {
-      System.out.println("----ByPassed----");
-      return false;
-    }
   }
 
   /**
@@ -85,6 +80,4 @@ public class DuplicateChecker {
   /** The hm. */
   private static HashMap hm;
 
-  /** The val set. */
-  private static ArrayList<String> valSet;
 }

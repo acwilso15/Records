@@ -16,9 +16,6 @@ class FeedDataPaths {
 	/** The Location. */
 	private final String Location;
 
-	/** The Token. */
-	private final String Token;
-
 	/** The xpath title. */
 	private final String xpathTitle;
 
@@ -64,12 +61,10 @@ class FeedDataPaths {
 	 * @param Order
 	 *            the order
 	 */
-	FeedDataPaths(String UrlPath, String Location, String Token,
-			String xpathTitle, String xpathArtist, String InType,
+	FeedDataPaths(String UrlPath, String Location,String xpathTitle, String xpathArtist, String InType,
 			String[][] RssString, int numOfSongs, int numVar, String Order) {
 		this.UrlPath = UrlPath;
 		this.Location = Location;
-		this.Token = Token;
 		this.xpathTitle = xpathTitle;
 		this.xpathArtist = xpathArtist;
 		this.numOfSongs = numOfSongs;
@@ -132,15 +127,6 @@ class FeedDataPaths {
 	 */
 	public String[][] getRssString() {
 		return RssString;
-	}
-
-	/**
-	 * Gets the token.
-	 *
-	 * @return the Token
-	 */
-	public String getToken() {
-		return Token;
 	}
 
 	/**

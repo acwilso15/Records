@@ -7,8 +7,6 @@ package Records.Attributes;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
@@ -16,7 +14,6 @@ import javax.swing.table.DefaultTableModel;
 import Records.Database.LibraryUpdaterImp;
 import Records.Main.RecordsMain;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DirectorySelector.
  *

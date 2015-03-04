@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -108,48 +107,45 @@ class EchonestSongAttributes {
    *
    * @return the array list
    */
-  private static ArrayList<String> createValueSet(String titles, String artists, boolean byPass) {
+  private static ArrayList<String> createValueSet(String titles, String artists) {
     System.out.println("EchonestSongAttributes.createValueSet()");
 
     ArrayList<String> valSet = new ArrayList<String>();
-    if (DuplicateChecker.isDuplicate(titles, artists, byPass)) {
-      valSet = null;
-    } else {
-      try {
-        parseJSON(artists, titles);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-      String Key = "", BPM = "";
-
-      if (bpms.equals("")) {
-        BPM = addZeros(beatBPM);
-      } else {
-        BPM = addZeros(bpms);
-      }
-
-      if (!key.equals("")) {
-        Key = convertNumberToKey();
-      } else if (beatKey != null) {
-        Key = beatKey;
-      }
-      String Dance = addZeros(danceability);
-      String EnergyAmount = addZeros(energy);
-      String Acoustic = addZeros(acousticness);
-
-      valSet.add(titles);
-      valSet.add(artists);
-      valSet.add(BPM);
-      valSet.add(Key);
-      valSet.add(Dance);
-      valSet.add(EnergyAmount);
-      valSet.add(Acoustic);
-      valSet.add(albumTitles);
-      valSet.add(RssGenres);
-      valSet.add(PreviewURL); // FilePathWay
-      valSet.add(PurchaseLink);
+    try {
+      parseJSON(artists, titles);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+
+    String Key = "", BPM = "";
+
+    if (bpms.equals("")) {
+      BPM = addZeros(beatBPM);
+    } else {
+      BPM = addZeros(bpms);
+    }
+
+    if (!key.equals("")) {
+      Key = convertNumberToKey();
+    } else if (beatKey != null) {
+      Key = beatKey;
+    }
+    String Dance = addZeros(danceability);
+    String EnergyAmount = addZeros(energy);
+    String Acoustic = addZeros(acousticness);
+
+    valSet.add(titles);
+    valSet.add(artists);
+    valSet.add(BPM);
+    valSet.add(Key);
+    valSet.add(Dance);
+    valSet.add(EnergyAmount);
+    valSet.add(Acoustic);
+    valSet.add(albumTitles);
+    valSet.add(RssGenres);
+    valSet.add(PreviewURL); // FilePathWay
+    valSet.add(PurchaseLink);
+
     return valSet;
   }
 
@@ -280,10 +276,8 @@ class EchonestSongAttributes {
    *          the bypass duplicate
    * @return the array list
    */
-  static ArrayList<String> retrieveEchoInfo(String artist, String title, boolean bypassDuplicate) {
-    System.out.println("EchonestSongAttributes.retrieveEchoInfo(" + artist + ", " + title + ", "
-        + bypassDuplicate + ")");
-    byPass = bypassDuplicate;
+  static ArrayList<String> retrieveEchoInfo(String artist, String title) {
+    System.out.println("EchonestSongAttributes.retrieveEchoInfo(" + artist + ", " + title + ")");
     artists = artist.trim();
     if (!(title.contains("(") || title.contains(")"))) {
       titles = title;
@@ -314,7 +308,7 @@ class EchonestSongAttributes {
       beatBPM = beatportValSet.get(4).toString();
       beatKey = beatportValSet.get(5).toString();
     }
-    ArrayList<String> valSet = createValueSet(titles, artists, byPass);
+    ArrayList<String> valSet = createValueSet(titles, artists);
     // valSet.add(Path);
     return valSet;
   }
@@ -357,7 +351,7 @@ class EchonestSongAttributes {
       albumTitles, RssGenres, PreviewURL, PurchaseLink, beatBPM, beatKey;
 
   /** The by pass. */
-  private static boolean resetNoNum, byPass;
+  private static boolean resetNoNum;
 
   /** The Current time. */
   private static long CurrentTime;
