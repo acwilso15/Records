@@ -15,72 +15,41 @@ import java.util.ArrayList;
  */
 public class FeedDataSender extends Thread {
 
-  /** The keys. */
-  private ArrayList<FeedDataPaths> keys;
+  /** The Paths. */
+  private ArrayList<FeedDataPaths> Paths;
 
   /** The save data. */
   private FeedDataSaver saveData;
 
-  /**
-   * Instantiates a new feed data sender.
-   */
+  /** Instantiates a new feed data sender. */
   public FeedDataSender() {
     System.out.println("FeedDataSender.run()");
     saveData = new FeedDataSaver();
-    keys = new ArrayList<>();
-
-    // Meaning: keys.add(new FeedDataKeys(UrlPath, Location, xpathTitle, xpathArtist, InType, RssString, numOfSongs, numVar, Order));
-
-    keys.add(new FeedDataPaths("http://www.billboard.com/rss/charts/hot-100", "Billboard-Pop",
-        "rss/channel/item/title", "rss/channel/item/artist", "XML", null, 100, 2, null));
-
-    keys.add(new FeedDataPaths("http://www.billboard.com/rss/charts/dance-electronic-songs",
-        "Billboard-EDM", "rss/channel/item/title", "rss/channel/item/artist", "XML", null, 25, 2, null));
+    Paths = new ArrayList<FeedDataPaths>();
     
-    keys.add(new FeedDataPaths("http://www.billboard.com/rss/charts/country-songs",
-        "Billboard-Country", "rss/channel/item/title", "rss/channel/item/artist", "XML", null, 25, 2, null));
+    // Meaning: Paths.add(new FeedDataKeys(UrlPath, Location, xpathTitle, xpathArtist, InType,
+    // RssString, numOfSongs, numVar, Order));
+    //extractWebDataToArray(String site, String jsonDocSelect, String jsonDocAttribute,int numOfSongs, String jsonToken, String location, String InType, int numVar, String xPathTitle, String xPathArtist) {  
+    
+    Paths.add(new FeedDataPaths("Billboard-Pop", "Title_Artist", WebsiteDataExtractor.extractWebDataToArray("http://www.billboard.com/rss/charts/hot-100",null, null, 100, null, "Billboard-Pop", "XML", 2, "rss/channel/item/title", "rss/channel/item/artist"),100));
+    Paths.add(new FeedDataPaths("Billboard-EDM", "Title_Artist", WebsiteDataExtractor.extractWebDataToArray("http://www.billboard.com/rss/charts/dance-electronic-songs",null, null, 25, null, "Billboard-Pop", "XML", 2, "rss/channel/item/title", "rss/channel/item/artist"),25));
+    Paths.add(new FeedDataPaths("Billboard-Country", "Title_Artist", WebsiteDataExtractor.extractWebDataToArray("http://www.billboard.com/rss/charts/country-songs",null, null, 25, null, "Billboard-Country", "XML", 2, "rss/channel/item/title", "rss/channel/item/artist"),25));
+    Paths.add(new FeedDataPaths("Billboard-RnB", "Title_Artist", WebsiteDataExtractor.extractWebDataToArray("http://www.billboard.com/rss/charts/r-b-hip-hop-songs",null, null, 25, null, "Billboard-RnB", "XML", 2, "rss/channel/item/title", "rss/channel/item/artist"),25));
+    Paths.add(new FeedDataPaths("Hypem", "Artist_Title", WebsiteDataExtractor.extractWebDataToArray("http://hypem.com/feed/popular/feed.xml",null, null, 20, null, "Hypem", "XML", 1, "rss/channel/item/title", "rss/channel/item/artist"),20));
+    Paths.add(new FeedDataPaths("Itunes-Pop", "Title_Artist", WebsiteDataExtractor.extractWebDataToArray("http://itunes.apple.com/us/rss/topsongs/limit=100/xml",null, null, 40, null, "Itunes-Pop", "XML", 1, "feed/entry/title", "feed/entry/title"),40));
+    Paths.add(new FeedDataPaths("Itunes-Country", "Title_Artist", WebsiteDataExtractor.extractWebDataToArray("http://itunes.apple.com/us/rss/topsongs/limit=100/genre=6/xml",null, null, 40, null, "Itunes-Country", "XML", 1, "feed/entry/title", "feed/entry/title"),40));
+    Paths.add(new FeedDataPaths("Itunes-RnB", "Title_Artist", WebsiteDataExtractor.extractWebDataToArray("http://itunes.apple.com/us/rss/topsongs/limit=100/genre=15/xml",null, null, 40, null, "Itunes-RnB", "XML", 1, "feed/entry/title", "feed/entry/title"),40));
+    Paths.add(new FeedDataPaths("Itunes-EDM", "Title_Artist", WebsiteDataExtractor.extractWebDataToArray("http://itunes.apple.com/us/rss/topsongs/limit=100/genre=7/xml",null, null, 40, null, "Itunes-EDM", "XML", 1, "feed/entry/title", "feed/entry/title"),40));
 
-    keys.add(new FeedDataPaths("http://www.billboard.com/rss/charts/r-b-hip-hop-songs",
-        "Billboard-RnB", "rss/channel/item/title", "rss/channel/item/artist", "XML", null, 25, 2, null));
-
-    keys.add(new FeedDataPaths("http://hypem.com/feed/popular/feed.xml", "Hypem",
-        "rss/channel/item/title", "rss/channel/item/title", "XML", null, 20, 1, "Artist_Title"));
-
-    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=100/xml",
-        "Itunes-Pop", "feed/entry/title", "feed/entry/title", "XML", null, 40, 1, "Title_Artist"));
-
-    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=100/genre=6/xml",
-        "Itunes-Country", "feed/entry/title", "feed/entry/title", "XML", null, 40, 1, "Title_Artist"));
-
-    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=100/genre=15/xml",
-        "Itunes-RnB", "feed/entry/title", "feed/entry/title", "XML", null, 40, 1, "Title_Artist"));
-
-    keys.add(new FeedDataPaths("https://itunes.apple.com/us/rss/topsongs/limit=100/genre=7/xml",
-        "Itunes-EDM", "feed/entry/title", "feed/entry/title", "XML", null, 40, 1, "Title_Artist"));
-
-    keys.add(new FeedDataPaths("http://www.bbc.co.uk/radio1/chart/singles", "UK40", null,
-        null, "String", WebsiteDataExtractor.extractWebDataToArray(
-            "http://www.bbc.co.uk/radio1/chart/singles", "div[class = p-f p-f-v1 p-f-variant-small p-f-p_playlister  p-f-lang-en-gb]",
-            "data-title", 40, "||", "UK40"), 40, 2, "Title_Artist"));
-
-    keys.add(new FeedDataPaths("http://www.shazam.com/charts/us_top_100", "Shazam", null,
-        null, "String", WebsiteDataExtractor.extractWebDataToArray(
-            "http://www.shazam.com/charts/us_top_100", "img[itemprop=image]", "alt", 100, "-", "Shazam"), 100, 2, "Artist_Title"));
-
-    keys.add(new FeedDataPaths("http://classic.beatport.com/top-100", "Beatport", null, null,
-        "String", WebsiteDataExtractor.extractWebDataToArray("http://classic.beatport.com/top-100",
-            "span[class = play-queue play-queue-med-small]", "data-json", 100, "-", "Beatport"), 100, 2, "Artist_Title"));
-
+    Paths.add(new FeedDataPaths("UK40", "Title_Artist", WebsiteDataExtractor.extractWebDataToArray("http://www.bbc.co.uk/radio1/chart/singles","div[class = p-f p-f-v1 p-f-variant-small p-f-p_playlister  p-f-lang-en-gb]", "data-title", 40, "||", "UK40", "JSON", 2, null, null),40));
+    Paths.add(new FeedDataPaths("Shazam", "Artist_Title", WebsiteDataExtractor.extractWebDataToArray("http://www.shazam.com/charts/us_top_100","img[itemprop=image]", "alt", 100, "-", "Shazam", "JSON", 2, null, null),100));
+    Paths.add(new FeedDataPaths("Beatport", "Artist_Title", WebsiteDataExtractor.extractWebDataToArray("http://classic.beatport.com/top-100","span[class = play-queue play-queue-med-small]", "data-json", 100, "-", "Beatport", "JSON", 2, null, null),100));
   }
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Thread#run()
-   */
+
   @Override
   public void run() {
     System.out.println("FeedDataSender.startExtraction()");
-    for (FeedDataPaths key : keys) {
+    for (FeedDataPaths key : Paths) {
       saveData.readFeeds(key);
     }
     for (int y = 0; y < saveData.getFeedData().size(); y++) {

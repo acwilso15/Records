@@ -102,78 +102,6 @@ public class FeedDataSaver {
   }
 
   /**
-   * Gets the track nodes.
-   *
-   * @param key
-   *          the key
-   * @param UrlPath
-   *          the url path
-   * @param xpathTitle
-   *          the xpath title
-   * @param xpathArtist
-   *          the xpath artist
-   * @param x
-   *          the x
-   * @return the track nodes
-   * @throws MalformedURLException
-   *           the malformed url exception
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws ParserConfigurationException
-   *           the parser configuration exception
-   * @throws SAXException
-   *           the SAX exception
-   * @throws XPathExpressionException
-   *           the x path expression exception
-   */
-  private NodeList getTrackNodes(FeedDataPaths key, String UrlPath, String path) {
-    System.out.println("FeedDataSaver.getTrackNodes(" + key + "," + UrlPath + "," + path + ")");
-    NodeList trackNameNodes = null;
-    try {
-      XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
-      XPath xPathEvaluator = XPATH_FACTORY.newXPath();
-      XPathExpression nameExpr = xPathEvaluator.compile(path);
-      Document document = generateDocument(UrlPath, key);
-      trackNameNodes = (NodeList) nameExpr.evaluate(document, XPathConstants.NODESET);
-    } catch (XPathExpressionException | IOException | ParserConfigurationException | SAXException e) {
-      e.printStackTrace();
-    }
-    return trackNameNodes;
-  }
-
-  /**
-   * Generate document.
-   *
-   * @param UrlPath
-   *          the url path
-   * @param key
-   *          the key
-   * @return the document
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws ParserConfigurationException
-   *           the parser configuration exception
-   * @throws SAXException
-   *           the SAX exception
-   */
-  private Document generateDocument(String UrlPath, FeedDataPaths key) throws java.io.IOException,
-      javax.xml.parsers.ParserConfigurationException, org.xml.sax.SAXException {
-    System.out.println("FeedDataSaver.generateDocument(" + key + "," + UrlPath + ")");
-    URL url = new URL(UrlPath);
-    DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
-    URLConnection connection = url.openConnection();
-    DocumentBuilder db = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
-    Document document = null;
-    try {
-      document = db.parse(connection.getInputStream());
-    } catch (java.net.SocketException ex) {
-      ex.printStackTrace();
-      readFeeds(key);
-    }
-    return document;
-  }
-
-  /**
    * Read feeds.
    *
    * @param key
@@ -181,57 +109,24 @@ public class FeedDataSaver {
    */
   void readFeeds(FeedDataPaths key) {
     System.out.println("FeedDataSaver.readFeeds()");
-    String UrlPath = key.getUrlPath();
     String Location = key.getLocation();
-    int numVar = key.getNumVar();
     String Order = key.getOrder();
-    String xpathTitle = key.getXpathTitle();
-    String xpathArtist = key.getXpathArtist();
-    String InType = key.getInType();
-    String[][] RssString = key.getRssString();
+    String[][] rssSongsArray = key.getRssSongsArray();
     int numOfSongs = key.getNumOfSongs();
 
-    if (InType.equals("XML")) {
-      for (int i = 0; i < numOfSongs; i++) {
-        System.out.println("SAVE from XML");
-        String title = "";
-        String artist = "";
-        if (numVar != 1) {
-          title = getTrackNodes(key, UrlPath, xpathTitle).item(i).getTextContent()
-              .replace(" - ", "~").replace((i + 1) + ":", "").trim();
-          artist = getTrackNodes(key, UrlPath, xpathArtist).item(i).getTextContent()
-              .replace(" - ", "~").replace((i + 1) + ":", "").trim();
-        } else {
-          String trackString = getTrackNodes(key, UrlPath, xpathTitle).item(i).getTextContent()
-              .replace(" - ", "~").replace((i + 1) + ":", "").trim();
-          if (Order.equals("Artist_Title")) {
-            artist = trackString.substring(0, trackString.indexOf("~")).replace("~", "");
-            title = trackString.replace(artist, "");
-          } else if (Order.equals("Title_Artist")) {
-            title = trackString.substring(0, trackString.indexOf("~")).replace("~", "");
-            artist = trackString.replace(title, "");
-          }
-        }
-        title = AttributeCleaner.cleanAttribute("Title", title).replace("~", "");
-        artist = AttributeCleaner.cleanAttribute("Artist", artist).replace("~", "");
-        save(Location, title, artist);
+    for (int i = 0; i < numOfSongs; i++) {
+      String title = "";
+      String artist = "";
+      if (Order.equals("Artist_Title")) {
+        artist = rssSongsArray[i][0];
+        title = rssSongsArray[i][1];
+      } else {// Title_Artist
+        title = rssSongsArray[i][1];
+        artist = rssSongsArray[i][0];
       }
-    } else {
-      for (int i = 0; i < numOfSongs; i++) {
-        String title = "";
-        String artist = "";
-        System.out.println("SAVE not from XML");
-        if (Order.equals("Artist_Title")) {
-          artist = RssString[i][0];
-          title = RssString[i][1];
-        } else {// Title_Artist
-          title = RssString[i][1];
-          artist = RssString[i][0];
-        }
-        title = AttributeCleaner.cleanAttribute("Title", title).replace("~", "");
-        artist = AttributeCleaner.cleanAttribute("Artist", artist).replace("~", "");
-        save(Location, title, artist);
-      }
+      title = AttributeCleaner.cleanAttribute("Title", title).replace("~", "");
+      artist = AttributeCleaner.cleanAttribute("Artist", artist).replace("~", "");
+      save(Location, title, artist);
     }
   }
 
