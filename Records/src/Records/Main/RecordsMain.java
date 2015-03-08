@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import Records.Attributes.DuplicateChecker;
+import Records.Attributes.FeedDataStore;
 import Records.Database.DBSQL;
 import Records.Database.DatabaseSetup;
 import Records.Email.EmailWindow;
@@ -26,6 +26,8 @@ import Records.UserInterface.UserInterface;
  */
 public class RecordsMain {
 
+  private static HashMap<Object, FeedDataStore> feedSongHash;
+  
 	/**
 	 * Adds the to file path list.
 	 *
@@ -84,7 +86,7 @@ public class RecordsMain {
 			Logger.getLogger(SplashClass.class.getName()).log(Level.SEVERE,
 					null, ex);
 		}
-		DuplicateChecker.setHm(new HashMap());
+		setFeedSongHash(new HashMap<Object, FeedDataStore>());
 
 		UI = new UserInterface();
 		dialog = new EmailWindow();
@@ -95,7 +97,15 @@ public class RecordsMain {
 		DatabaseSetup.Setup();
 	}
 
-	/** The dialog. */
+	public static HashMap<Object, FeedDataStore> getFeedSongHash() {
+    return feedSongHash;
+  }
+
+  static void setFeedSongHash(HashMap<Object, FeedDataStore> feedSongHash) {
+    RecordsMain.feedSongHash = feedSongHash;
+  }
+
+  /** The dialog. */
 	public static EmailWindow dialog;
 
 	/** The dba. */

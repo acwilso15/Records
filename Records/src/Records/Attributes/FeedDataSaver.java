@@ -1,25 +1,10 @@
 package Records.Attributes;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import java.util.HashMap;
 
 import Records.Database.DatabaseSetup;
+import Records.Main.RecordsMain;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -71,35 +56,12 @@ public class FeedDataSaver {
         + DatabaseSetup.splash.preRssExtractCount + "--------------------");
   }
 
-  /** The feed data. */
-  private final ArrayList<FeedDataStore> feedData;
-
-  /** The song. */
-  private static ArrayList<String> song;
-
   /** The Rss song counter. */
   private static int RssSongCounter;
 
   /** The Cur saved song. */
   private static String CurSavedSong;
 
-  /**
-   * Instantiates a new feed data saver.
-   */
-  public FeedDataSaver() {
-    System.out.println("FeedDataSaver.FeedDataSaver()");
-    feedData = new ArrayList<>();
-  }
-
-  /**
-   * Gets the feed data.
-   *
-   * @return the feedData
-   */
-  public ArrayList<FeedDataStore> getFeedData() {
-    System.out.println("FeedDataSaver.getFeedData()");
-    return feedData;
-  }
 
   /**
    * Read feeds.
@@ -145,20 +107,16 @@ public class FeedDataSaver {
     String bpms, theKeys, Danceability, Energy, Acousticness, albumTitles, RssGenres;
     setRssSongCounter(getRssSongCounter() + 1);
     setCurSavedSong(title, artist, Location);
-    ArrayList<String> valSet = DuplicateChecker.getValues(Location, title.replaceAll("/", "-"), artist);
+    ArrayList<String> valSet = DuplicateChecker.getValues(Location, title.replaceAll("/", "-"),
+        artist);
 
-    if (valSet == null) {
+    if (valSet == null) {// If duplicate was found
       String previousLocation;
-      int feedDataSize = getFeedData().size();
-      ArrayList<FeedDataStore> feedDataSet = getFeedData();
-
-      for (int x = 0; x < feedDataSize; x++) {
-        FeedDataStore feedVal = feedDataSet.get(x);
-        if (title.equals(feedVal.getRssTitle()) && artist.equals(feedVal.getMusicians())) {
-          previousLocation = feedVal.getLocation();
-          feedVal.setLocation(previousLocation + " " + Location);
-          break;
-        }
+      HashMap<Object, FeedDataStore> feedDataSet = RecordsMain.getFeedSongHash();
+      FeedDataStore feedVal = feedDataSet.get(title + "," + artist);
+      if (title.equals(feedVal.getRssTitle()) && artist.equals(feedVal.getMusicians())) {
+        previousLocation = feedVal.getLocation();
+        feedVal.setLocation(previousLocation + " " + Location);
       }
     } else {
       title = valSet.get(0);
@@ -175,9 +133,10 @@ public class FeedDataSaver {
       String Song_ID = title + "_" + artist + "_" + albumTitles;
       String images = "";
 
-      getFeedData().add(
-          new FeedDataStore(Song_ID, title, bpms, RssGenres, Danceability, Energy, Acousticness,
-              theKeys, Location, FilePathway, PurchaseLink, albumTitles, images, artist));
+      RecordsMain.getFeedSongHash().put(
+          title + "," + artist,
+          (new FeedDataStore(Song_ID, title, bpms, RssGenres, Danceability, Energy, Acousticness,
+              theKeys, Location, FilePathway, PurchaseLink, albumTitles, images, artist)));
     }
   }
 }

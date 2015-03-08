@@ -8,21 +8,14 @@ package Records.Attributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Records.Main.RecordsMain;
+
 /**
  * The Class DuplicateChecker.
  *
  * @author Alexander Wilson
  */
 public class DuplicateChecker {
-
-  /**
-   * Gets the hm.
-   *
-   * @return the hm
-   */
-  private static HashMap getHm() {
-    return hm;
-  }
 
   /**
    * Gets the values.
@@ -40,11 +33,6 @@ public class DuplicateChecker {
     } else {
       valSet = EchonestSongAttributes.retrieveEchoInfo(Artist, Title);
     }
-    if (valSet != null) {
-      String newTitle = valSet.get(0);
-      String newArtist = valSet.get(1);
-      getHm().put(newTitle + "," + newArtist, valSet);
-    }
     return valSet;
   }
 
@@ -58,7 +46,7 @@ public class DuplicateChecker {
    */
   static boolean isDuplicate(String Title, String Artist) {
     System.out.println("DuplicateEntry.isDuplicate(" + Title + ", " + Artist + ")");
-      if (getHm().containsKey(Title + "," + Artist)) {
+      if (RecordsMain.getFeedSongHash().containsKey(Title + "," + Artist)) {
         System.out.println("----Duplicate found----");
         return true;
       } else {
@@ -66,18 +54,5 @@ public class DuplicateChecker {
         return false;
       }
   }
-
-  /**
-   * Sets the hm.
-   *
-   * @param aHm
-   *          the hm to set
-   */
-  public static void setHm(HashMap aHm) {
-    hm = aHm;
-  }
-
-  /** The hm. */
-  private static HashMap hm;
 
 }

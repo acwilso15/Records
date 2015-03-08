@@ -13,7 +13,7 @@ import Records.Main.RecordsMain;
  *
  * @author Alexander
  */
-class FeedDataStore {
+public class FeedDataStore {
 
 	/** The Song_ id. */
 	private final String Song_ID;

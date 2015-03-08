@@ -160,7 +160,7 @@ class ItunesInfoRetriever {
 			itunesValueSet.add(getTitle(objectInArray));
 			itunesValueSet.add(getArtist(objectInArray));
 		} catch (JSONException ex) {
-			System.err.println("Error Connecting to Itunes");
+			System.out.println("----------------------Error Connecting to Itunes------------------------");
 			itunesValueSet.add("");
 			itunesValueSet.add("");
 			itunesValueSet.add("");

@@ -6,6 +6,10 @@
 package Records.Attributes;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import Records.Main.RecordsMain;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,8 +56,14 @@ public class FeedDataSender extends Thread {
     for (FeedDataPaths key : Paths) {
       saveData.readFeeds(key);
     }
-    for (int y = 0; y < saveData.getFeedData().size(); y++) {
-      saveData.getFeedData().get(y).insertFeedData();
+    Collection c = RecordsMain.getFeedSongHash().values();
+    
+    //obtain an Iterator for Collection
+    Iterator itr = c.iterator();
+   
+    //iterate through HashMap values iterator
+    while(itr.hasNext()){
+      ((FeedDataStore) itr.next()).insertFeedData();
     }
     System.out.println("RSS Import Complete!");
   }
